@@ -1,0 +1,32 @@
+{
+  "name": "gaoop",
+  "version": "1.0.0",
+  "description": "A NodeJs library for Google Analytics with OOP in mind",
+  "keywords": [
+    "analytics",
+    "google analytics",
+    "ga",
+    "google analytics api",
+    "analytics reporting api v4"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/index.js",
+    "prettier": "prettier --no-config --parser flow --use-tabs --write *.js **/*.js"
+  },
+  "homepage": "https://github.com/ringoldslescinskis/gaoop#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ringoldslescinskis/gaoop"
+  },
+  "author": "Ringolds Lescinskis",
+  "license": "MIT",
+  "dependencies": {
+    "clone-deep": "^4.0.0",
+    "googleapis": "^32.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^6.0.0",
+    "prettier": "^1.13.7"
+  }
+}
