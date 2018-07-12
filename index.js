@@ -21,85 +21,64 @@ const GAOOP = function(params) {
 	}
 
 	this.analytics = google.analyticsreporting("v4");
-
-	this.requests = [];
 };
 
-GAOOP.prototype.clearRequests = function() {
-	this.requests = [];
-	return this;
-};
-
-GAOOP.prototype.addRequest = function(request) {
-	this.requests.push(cloneDeep(request));
-	return this;
-};
-
-GAOOP.prototype.run = function(params) {
+GAOOP.prototype.run = function(request, params = {}) {
 	var that = this;
+	var currentPage = params.currentPage ? params.currentPage : 1;
 	return new Promise(function(resolve, reject) {
-		var requests = [];
-
-		that.requests.forEach(function(request) {
-			requests.push(request.make());
-		});
+		var results = [];
 
 		that.analytics.reports.batchGet(
 			{
 				auth: that.client,
 				resource: {
-					reportRequests: requests
+					reportRequests: [request.make()]
 				}
 			},
-			function(err, response) {
+			async function(err, response) {
 				if (err) {
 					return reject(err);
 				}
 
-				var reports = [];
+				var report = response.data.reports[0];
 
-				response.data.reports.forEach(function(report) {
-					var reportData = [];
-
-					var currentPage = 1;
-
-					var totalPages = params.pages ? params.pages : 1;
-
-					while (currentPage <= totalPages) {
-						report.data.rows.forEach(function(entry) {
-							reportData.push({
-								dimensions: Object.assign.apply(
-									{},
-									report.columnHeader.dimensions.map((v, i) => ({
-										[v.substring(3)]: entry.dimensions[i]
-									}))
-								),
-								metrics: Object.assign.apply(
-									{},
-									report.columnHeader.metricHeader.metricHeaderEntries.map(
-										(v, i) => ({
-											[v.name.substring(3)]: entry.metrics[0].values[i]
-										})
-									)
-								)
-							});
-						});
-					}
-
-					reports.push(reportData);
-
-					console.log(report.nextPageToken);
+				report.data.rows.forEach(function(entry) {
+					results.push({
+						dimensions: Object.assign.apply(
+							{},
+							report.columnHeader.dimensions.map((v, i) => ({
+								[v.substring(3)]: entry.dimensions[i]
+							}))
+						),
+						metrics: Object.assign.apply(
+							{},
+							report.columnHeader.metricHeader.metricHeaderEntries.map((v, i) => ({
+								[v.name.substring(3)]: entry.metrics[0].values[i]
+							}))
+						)
+					});
 				});
 
-				if (reports.length == 1) {
-					return resolve(reports[0]);
+				if (!params.pages) {
+					return resolve(results);
 				}
 
-				if (params.mergeReports) {
-					reports = [].concat.apply([], reports);
+				if (currentPage === params.pages) {
+					return resolve(results);
 				}
 
-				resolve(reports);
+				if (report.nextPageToken) {
+					request.setPageToken(report.nextPageToken);
+					results = results.concat(
+						await that.run(request, {
+							pages: params.pages,
+							currentPage: currentPage + 1
+						})
+					);
+				}
+
+				resolve(results);
 			}
 		);
 	});
