@@ -8,7 +8,7 @@ const { SimpleGA, Request } = require("../index.js");
 
 	var request = (new Request())
 		.view(process.env.GA_VIEW_ID)
-		.pageSize(10)
+		.results(10)
 		.dimension("pagePath")
 		.metric("pageviews")
 		.orderDesc("pageviews");
