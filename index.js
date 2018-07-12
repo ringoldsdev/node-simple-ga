@@ -51,8 +51,8 @@ GAOOP.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 					});
 
 					headers = {
-						dimensions: QueryParser.cleanKeys(report.columnHeader.dimensions),
-						metrics: QueryParser.cleanKeys(metricColumnHeader)
+						dimensions: ResultParser.cleanKeys(report.columnHeader.dimensions),
+						metrics: ResultParser.cleanKeys(metricColumnHeader)
 					}
 				}
 
@@ -101,8 +101,8 @@ GAOOP.prototype.run = async function(request, params = {}) {
 
 	result.entries.forEach(function(entry) {
 		processedResult.push({
-			dimensions: QueryParser.mergeKeyValueArrays(result.headers.dimensions, entry.dimensions),
-			metrics: QueryParser.mergeKeyValueArrays(result.headers.dimensions, entry.metrics)				
+			dimensions: ResultParser.mergeKeyValueArrays(result.headers.dimensions, entry.dimensions),
+			metrics: ResultParser.mergeKeyValueArrays(result.headers.metrics, entry.metrics)				
 		});
 	});
 
