@@ -1,5 +1,5 @@
 {
-  "name": "simple-ga",
+  "name": "simple-google-analytics",
   "version": "0.2.0",
   "description": "A simple to use NodeJs package for the Google Analytics Reporting API",
   "keywords": [
@@ -19,10 +19,10 @@
     "test": "node node_modules/mocha/bin/mocha",
     "prettier": "prettier --no-config --print-width 120 --parser flow --use-tabs --write *.js **/*.js"
   },
-  "homepage": "https://github.com/lescinskis-com/simple-ga#readme",
+  "homepage": "https://github.com/lescinskis-com/simple-google-analytics#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lescinskis-com/simple-ga"
+    "url": "https://github.com/lescinskis-com/simple-google-analytics"
   },
   "author": {
     "name": "Ringolds Lescinskis",

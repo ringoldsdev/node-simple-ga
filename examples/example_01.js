@@ -1,10 +1,10 @@
 require("dotenv").load();
 
 const path = require("path");
-const { SimpleGA, Request } = require("../index.js");
+const { SimpleGoogleAnalytics, Request } = require("../index.js");
 
 (async function() {
-	var analytics = new SimpleGA(path.join(__dirname, "../key.json"));
+	var analytics = new SimpleGoogleAnalytics(path.join(__dirname, "../key.json"));
 
 	var request = (new Request())
 		.view(process.env.GA_VIEW_ID)

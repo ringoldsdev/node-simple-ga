@@ -7,7 +7,7 @@ const ResultParser = require("./src/ResultParser");
 const { google } = require("googleapis");
 const cloneDeep = require("clone-deep");
 
-const SimpleGA = function(param) {
+const SimpleGoogleAnalytics = function(param) {
 	this.client = null;
 
 	if(typeof param === "string") {
@@ -29,7 +29,7 @@ const SimpleGA = function(param) {
 	this.analytics = google.analyticsreporting("v4");
 };
 
-SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
+SimpleGoogleAnalytics.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 	var that = this;
 	return new Promise(function(resolve, reject) {
 		var entries = [];
@@ -96,7 +96,7 @@ SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 	});
 };
 
-SimpleGA.prototype.run = async function(request, params = {}) {
+SimpleGoogleAnalytics.prototype.run = async function(request, params = {}) {
 	var result = await this.runRaw(request, params);
 
 	if (params.rawResults) {
@@ -116,7 +116,7 @@ SimpleGA.prototype.run = async function(request, params = {}) {
 };
 
 module.exports = {
-	SimpleGA,
+	SimpleGoogleAnalytics,
 	Request,
 	DimensionFilter,
 	MetricFilter

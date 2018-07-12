@@ -1,5 +1,5 @@
 
-# SimpleGA
+# SimpleGoogleAnalytics
 A simple to use NodeJs package for the Google Analytics Reporting API
 
 ## Down to business
