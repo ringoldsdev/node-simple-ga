@@ -45,7 +45,7 @@ However, you can expect further improvements to the request creation part of the
 ## Installation
 To use the package, run:
 ```JavaScript
-npm i simple-ga
+npm i simple-google-analytics
 ```
 Before using the package, you must create and set up a [Service Account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount). You can also watch a video tutorial on [how to set up a Service account](https://www.youtube.com/watch?v=r6cWB0xnOwE). While the title says it's a PHP tutorial, it doesn't really matter because you won't be using PHP anyway. Focus on the account creation and granting read access to the service account.
 ## Example #1
