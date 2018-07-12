@@ -2,7 +2,7 @@
 // https://developers.google.com/analytics/devguides/reporting/core/dimsmets
 
 var DimensionFilterBuilder = function() {
-	this.filter = defaultFilter;
+	this.filter = {};
 };
 
 DimensionFilterBuilder.prototype.dimension = function(name) {
