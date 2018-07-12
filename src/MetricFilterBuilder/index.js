@@ -16,15 +16,44 @@ MetricFilterBuilder.prototype.greaterThan = function(value) {
 	return this;
 };
 
+MetricFilterBuilder.prototype.gt = function(value) {
+	return this.greaterThan(value);
+};
+
+MetricFilterBuilder.prototype.greaterThanEqualTo = function(value) {
+	return this.greaterThan(value-1);
+};
+
+MetricFilterBuilder.prototype.gte = function(value) {
+	return this.greaterThan(value-1);
+};
+
 MetricFilterBuilder.prototype.lessThan = function(value) {
 	this.filter.operator = "LESS_THAN";
 	this.filter.comparisonValue = value.toString();
 	return this;
 };
 
+MetricFilterBuilder.prototype.lt = function(value) {
+	return this.lessThan(value);
+};
+
+
+MetricFilterBuilder.prototype.lessThanEqualTo = function(value) {
+	return this.lessThan(value+1);
+};
+
+MetricFilterBuilder.prototype.lte = function(value) {
+	return this.lessThan(value+1);
+};
+
 MetricFilterBuilder.prototype.equalTo = function(value) {
 	this.filter.comparisonValue = value.toString();
 	return this;
+};
+
+MetricFilterBuilder.prototype.equals = function(value) {
+	return this.equalTo(value);
 };
 
 MetricFilterBuilder.prototype.inverse = function() {
