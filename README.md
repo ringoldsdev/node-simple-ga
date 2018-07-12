@@ -52,7 +52,7 @@ Before using the package, you must create and set up a [Service Account](https:/
 The following is a basic working example of the code that was showcased at the top of the page. It returns the top 10 pages of your website. 
 
 ```JavaScript
-const { SimpleGoogleAnalytics, Request, MetricFilter } = require("simple-ga");
+const { SimpleGoogleAnalytics, Request, MetricFilter } = require("simple-google-analytics");
 
 (async function() {
 	var analytics = new SimpleGoogleAnalytics("./key.json");
