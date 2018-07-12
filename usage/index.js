@@ -1,14 +1,7 @@
 require("dotenv").load();
 
 const path = require("path");
-const {
-	GAOOP,
-	RequestBuilder,
-	MetricFilterBuilder,
-	DimensionFilterBuilder
-} = require("../index.js");
-
-console.log(process.env.GA_VIEW_ID);
+const { GAOOP, RequestBuilder, MetricFilterBuilder, DimensionFilterBuilder } = require("../index.js");
 
 (async function() {
 	var GoogleAnalytics = new GAOOP({
@@ -19,6 +12,7 @@ console.log(process.env.GA_VIEW_ID);
 	var request = new RequestBuilder();
 	request
 		.setView(process.env.GA_VIEW_ID)
+		.setPageSize(25)
 		.addDate({ from: "7daysago", to: "today" })
 		.addDimension("pagePath")
 		.addDimension("pageTitle")
@@ -33,20 +27,17 @@ console.log(process.env.GA_VIEW_ID);
 	request.addDimensionFilter(pagePathFilter);
 
 	// Metric filters
-	var pageviewsFilter = new MetricFilterBuilder();
-	pageviewsFilter.metric("pageviews").lessThan(11);
+	// var pageviewsFilter = new MetricFilterBuilder();
+	// pageviewsFilter.metric("pageviews").lessThan(11);
 
-	var usersFilter = new MetricFilterBuilder();
-	usersFilter.metric("users").lessThan(4);
+	// var usersFilter = new MetricFilterBuilder();
+	// usersFilter.metric("users").lessThan(4);
 
-	request.addMetricFilters([pageviewsFilter, usersFilter]);
-
-	// Register the request
-	GoogleAnalytics.addRequest(request);
+	// request.addMetricFilters([pageviewsFilter, usersFilter]);
 
 	try {
 		// Make the request and fetch data
-		var data = await GoogleAnalytics.run();
+		var data = await GoogleAnalytics.run(request);
 		console.log(data);
 		// ToDo - Pagination
 	} catch (err) {
