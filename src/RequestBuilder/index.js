@@ -27,7 +27,7 @@ RequestBuilder.prototype.hideValueRanges = function() {
 };
 
 RequestBuilder.prototype.pageSize = function(size) {
-	if(size == null) {
+	if (size == null) {
 		delete this.request.pageSize;
 		return this;
 	}
@@ -36,7 +36,7 @@ RequestBuilder.prototype.pageSize = function(size) {
 };
 
 RequestBuilder.prototype.pageToken = function(token) {
-	if(token == null) {
+	if (token == null) {
 		delete this.request.pageToken;
 		return this;
 	}
@@ -66,7 +66,7 @@ RequestBuilder.prototype.dateRange = function(params) {
 	if (params.to) {
 		dateRange.endDate = params.to;
 	}
-	if(!this.request.dateRanges) {
+	if (!this.request.dateRanges) {
 		this.request.dateRanges = [];
 	}
 	this.request.dateRanges.push(dateRange);
@@ -80,7 +80,7 @@ RequestBuilder.prototype.dimension = function(dimension, histogramBuckets) {
 			return bucket.toString();
 		});
 	}
-	if(!this.request.dimensions) {
+	if (!this.request.dimensions) {
 		this.request.dimensions = [];
 	}
 	this.request.dimensions.push(obj);
@@ -102,7 +102,7 @@ RequestBuilder.prototype.clearDimensions = function() {
 };
 
 RequestBuilder.prototype.metric = function(metric, type) {
-	if(!this.request.metrics) {
+	if (!this.request.metrics) {
 		this.request.metrics = [];
 	}
 	this.request.metrics.push({
@@ -122,15 +122,15 @@ RequestBuilder.prototype.metrics = function(metrics) {
 };
 
 RequestBuilder.prototype.removeDimension = function(name) {
-	if(!this.request.dimensions) {
+	if (!this.request.dimensions) {
 		return this;
-	};
+	}
 
 	this.request.dimensions = this.request.dimensions.filter(function(dimension) {
 		return dimension.name !== `ga:${name}`;
 	});
 
-	if(this.request.dimensions.length == 0) {
+	if (this.request.dimensions.length == 0) {
 		this.clearDimensions();
 	}
 
@@ -172,13 +172,13 @@ RequestBuilder.prototype.clearMetrics = function() {
 };
 
 RequestBuilder.prototype.removeeMtric = function(name) {
-	if(!this.request.metrics) {
+	if (!this.request.metrics) {
 		return this;
-	};
+	}
 	this.request.metrics = this.request.metrics.filter(function(metric) {
 		return metric.expression !== `ga:${name}`;
 	});
-	if(this.request.metrics.length == 0) {
+	if (this.request.metrics.length == 0) {
 		this.clearMetrics();
 	}
 	return this;
@@ -194,7 +194,7 @@ RequestBuilder.prototype.removeMetrics = function(metrics) {
 };
 
 RequestBuilder.prototype.filtersExpression = function(expression) {
-	if(expression == null) {
+	if (expression == null) {
 		delete this.request.filtersExpression;
 		return this;
 	}
@@ -203,7 +203,7 @@ RequestBuilder.prototype.filtersExpression = function(expression) {
 };
 
 RequestBuilder.prototype.orderBy = function(params) {
-	if(!this.request.orderBys) {
+	if (!this.request.orderBys) {
 		this.request.orderBys = [];
 	}
 	this.request.orderBys.push({
@@ -259,9 +259,9 @@ RequestBuilder.prototype.dimensionFilter = function(filter) {
 };
 
 RequestBuilder.prototype.filters = function(type, filters, operator = "AND") {
-	if(!this.request[type]) {
+	if (!this.request[type]) {
 		this.request[type] = [];
-	};
+	}
 
 	this.request[type].push({
 		operator,
@@ -274,7 +274,7 @@ RequestBuilder.prototype.filters = function(type, filters, operator = "AND") {
 };
 
 RequestBuilder.prototype.filter = function(type, filter) {
-	this.filters(type,[filter]);
+	this.filters(type, [filter]);
 	return this;
 };
 

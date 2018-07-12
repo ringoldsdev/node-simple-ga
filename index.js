@@ -23,11 +23,31 @@ const GAOOP = function(params) {
 	this.analytics = google.analyticsreporting("v4");
 };
 
-GAOOP.prototype.run = function(request, params = {}) {
+const castValue = function(value) {
+	var newValue = Number(value);
+
+	if(isNaN(newValue)) {
+		return value;
+	}
+
+	return newValue;
+}
+
+const makeKeyValueArray = function(keys, values) {
+	return Object.assign.apply(
+		{},
+		keys.map((v, i) => ({
+			[v]: castValue(values[i])
+		}))
+	);
+};
+
+GAOOP.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 	var that = this;
-	var currentPage = params.currentPage ? params.currentPage : 1;
 	return new Promise(function(resolve, reject) {
-		var results = [];
+
+		var entries = [];
+		var headers = null;
 
 		that.analytics.reports.batchGet(
 			{
@@ -43,45 +63,69 @@ GAOOP.prototype.run = function(request, params = {}) {
 
 				var report = response.data.reports[0];
 
+				if(currentPage == 1) {
+					headers = {
+						dimensions: report.columnHeader.dimensions.map(function(entry) {
+							return entry.substring(3);
+						}),
+						metrics: report.columnHeader.metricHeader.metricHeaderEntries.map(function(entry) {
+							return entry.name.substring(3);
+						})
+					}
+				}
+
 				report.data.rows.forEach(function(entry) {
-					results.push({
-						dimensions: Object.assign.apply(
-							{},
-							report.columnHeader.dimensions.map((v, i) => ({
-								[v.substring(3)]: entry.dimensions[i]
-							}))
-						),
-						metrics: Object.assign.apply(
-							{},
-							report.columnHeader.metricHeader.metricHeaderEntries.map((v, i) => ({
-								[v.name.substring(3)]: entry.metrics[0].values[i]
-							}))
-						)
+					entries.push({
+						dimensions: entry.dimensions,
+						metrics: entry.metrics[0].values
 					});
 				});
 
+				// If page count is not specified, stop here
 				if (!params.pages) {
-					return resolve(results);
+					return resolve({headers, entries});
 				}
 
+				// If we're at the last page, stop
 				if (currentPage === params.pages) {
-					return resolve(results);
+					return resolve({headers, entries});
 				}
 
+				// If there are more pages, get the results
 				if (report.nextPageToken) {
 					request.setPageToken(report.nextPageToken);
-					results = results.concat(
-						await that.run(request, {
-							pages: params.pages,
-							currentPage: currentPage + 1
-						})
-					);
+					var requestedData = await that.runRaw(request, {
+						pages: params.pages
+					}, currentPage + 1);
+					entries = entries.concat(requestedData.entries);
 				}
 
-				resolve(results);
+				return resolve({headers, entries});
 			}
 		);
 	});
+};
+
+
+GAOOP.prototype.run = async function(request, params = {}) {
+	
+	var result = await this.runRaw(request, params);
+
+	if(params.rawResults) {
+		return result;
+	}
+
+	var processedResult = [];
+
+	result.entries.forEach(function(entry) {
+		processedResult.push({
+			dimensions: makeKeyValueArray(result.headers.dimensions, entry.dimensions),
+			metrics: makeKeyValueArray(result.headers.dimensions, entry.metrics)				
+		});
+	});
+
+	return processedResult;
+
 };
 
 module.exports = {
