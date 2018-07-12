@@ -1,15 +1,8 @@
 // https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet
 // https://developers.google.com/analytics/devguides/reporting/core/dimsmets
 
-var defaultFilter = {
-	metricName: null,
-	not: false,
-	operator: "EQUAL",
-	comparisonValue: null
-};
-
 var MetricFilterBuilder = function() {
-	this.filter = defaultFilter;
+	this.filter = {};
 };
 
 MetricFilterBuilder.prototype.metric = function(name) {

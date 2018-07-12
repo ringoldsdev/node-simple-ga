@@ -1,14 +1,6 @@
 // https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet
 // https://developers.google.com/analytics/devguides/reporting/core/dimsmets
 
-var defaultFilter = {
-	dimensionName: null,
-	not: false,
-	operator: "EXACT",
-	expressions: null,
-	caseSensitive: false
-};
-
 var DimensionFilterBuilder = function() {
 	this.filter = defaultFilter;
 };
