@@ -42,31 +42,42 @@ const makeRequest = function(client, analytics, request) {
 	});
 };
 
+const makeKeyValueArray = function(keys, values) {
+	return Object.assign.apply(
+		{},
+		keys.map((v, i) => ({
+			[v]: values[i]
+		}))
+	);
+};
+
 GAOOP.prototype.run = function(request, params = {}) {
 	var that = this;
 	var currentPage = params.currentPage ? params.currentPage : 1;
+
 	return new Promise(async function(resolve, reject) {
+
 		var data = [];
 
 		var response = await makeRequest(that.client, that.analytics, request);
-
+		
 		var report = response.data.reports[0];
 
 		report.data.rows.forEach(function(entry) {
-			data.push({
-				dimensions: Object.assign.apply(
-					{},
-					report.columnHeader.dimensions.map((v, i) => ({
-						[v.substring(3)]: entry.dimensions[i]
-					}))
-				),
-				metrics: Object.assign.apply(
-					{},
-					report.columnHeader.metricHeader.metricHeaderEntries.map((v, i) => ({
-						[v.name.substring(3)]: entry.metrics[0].values[i]
-					}))
-				)
+
+			var metricColumnNames = report.columnHeader.metricHeader.metricHeaderEntries.map(function(entry) {
+				return entry.name.substring(3);
 			});
+
+			var dimensionColumnNames = report.columnHeader.dimensions.map(function(entry) {
+				return entry.substring(3);
+			});
+
+			data.push({
+				dimensions: makeKeyValueArray(dimensionColumnNames, entry.dimensions),
+				metrics: makeKeyValueArray(metricColumnNames, entry.metrics[0].values)
+			});
+
 		});
 
 		if (!params.pages) {
