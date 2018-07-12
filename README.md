@@ -3,12 +3,12 @@
 A simple to use NodeJs package for the Google Analytics Reporting API
 
 ## Down to business
-It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data and let SimpleGA handle the rest.
+It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data and let SimpleGoogleAnalytics handle the rest.
 
 Getting the top 10 links is as easy as this:
 
 ```JavaScript
-const analytics = new SimpleGA("./key.json");
+const analytics = new SimpleGoogleAnalytics("./key.json");
 
 var request = (new Request())
 	.view(12345678)
@@ -37,7 +37,7 @@ By default, data will be returned as an array of objects in the format below. Fo
 ```
 It's that simple!
 ## What it really is
-SimpleGA is a package that helps you to create a [Reporting API v4 compliant](https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet) JSON request,  sending it to the Google Analytics API, parsing the response and, if possible and requested by the user, paginating additional requests.
+SimpleGoogleAnalytics is a package that helps you to create a [Reporting API v4 compliant](https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet) JSON request,  sending it to the Google Analytics API, parsing the response and, if possible and requested by the user, paginating additional requests.
 ## What it won't be
 This package is not and will not be a data processing package. Data processing is left up to you - the developer, and no improvements beyond bugfixes of the basic data processing it already has must not be expected.
 
@@ -52,10 +52,10 @@ Before using the package, you must create and set up a [Service Account](https:/
 The following is a basic working example of the code that was showcased at the top of the page. It returns the top 10 pages of your website. 
 
 ```JavaScript
-const { SimpleGA, Request, MetricFilter } = require("simple-ga");
+const { SimpleGoogleAnalytics, Request, MetricFilter } = require("simple-ga");
 
 (async function() {
-	var analytics = new SimpleGA("./key.json");
+	var analytics = new SimpleGoogleAnalytics("./key.json");
 
 	var request = (new Request())
 		.view(12345678)
