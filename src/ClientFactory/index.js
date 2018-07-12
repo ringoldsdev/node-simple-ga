@@ -17,9 +17,7 @@ module.exports = {
 			params.email, // For authenticating and permissions
 			null,
 			params.privateKey,
-			params.permissions
-				? params.permissions
-				: ["https://www.googleapis.com/auth/analytics.readonly"],
+			params.permissions ? params.permissions : ["https://www.googleapis.com/auth/analytics.readonly"],
 			null
 		);
 		jwtClient.authorize(function(err, tokens) {
