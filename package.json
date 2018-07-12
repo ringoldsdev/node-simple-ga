@@ -1,6 +1,6 @@
 {
   "name": "gaoop",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A NodeJs library for Google Analytics Reporting API with OOP in mind",
   "keywords": [
     "analytics",
