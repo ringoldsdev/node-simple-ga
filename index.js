@@ -1,20 +1,20 @@
-const ClientFactory = require("./src/ClientFactory");
-const RequestBuilder = require("./src/RequestBuilder");
-const DimensionFilterBuilder = require("./src/DimensionFilterBuilder");
-const MetricFilterBuilder = require("./src/MetricFilterBuilder");
+const Client = require("./src/Client");
+const Request = require("./src/Request");
+const DimensionFilter = require("./src/DimensionFilter");
+const MetricFilter = require("./src/MetricFilter");
 const ResultParser = require("./src/ResultParser");
 
 const { google } = require("googleapis");
 const cloneDeep = require("clone-deep");
 
-const GAOOP = function(params) {
+const SimpleGA = function(params) {
 	this.client = null;
 
 	if (params.key) {
-		this.client = ClientFactory.createFromKey(params.key);
+		this.client = Client.createFromKey(params.key);
 	}
 	if (params.keyFile) {
-		this.client = ClientFactory.createFromKeyFile(params.keyFile);
+		this.client = Client.createFromKeyFile(params.keyFile);
 	}
 
 	if (!this.client) {
@@ -24,7 +24,7 @@ const GAOOP = function(params) {
 	this.analytics = google.analyticsreporting("v4");
 };
 
-GAOOP.prototype.runRaw = function(request, params = {}, currentPage = 1) {
+SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 	var that = this;
 	return new Promise(function(resolve, reject) {
 		var entries = [];
@@ -91,7 +91,7 @@ GAOOP.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 	});
 };
 
-GAOOP.prototype.run = async function(request, params = {}) {
+SimpleGA.prototype.run = async function(request, params = {}) {
 	var result = await this.runRaw(request, params);
 
 	if (params.rawResults) {
@@ -111,8 +111,8 @@ GAOOP.prototype.run = async function(request, params = {}) {
 };
 
 module.exports = {
-	GAOOP,
-	RequestBuilder,
-	DimensionFilterBuilder,
-	MetricFilterBuilder
+	SimpleGA,
+	Request,
+	DimensionFilter,
+	MetricFilter
 };

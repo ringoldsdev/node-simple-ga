@@ -2,31 +2,31 @@
 // https://developers.google.com/analytics/devguides/reporting/core/dimsmets
 const cloneDeep = require("clone-deep");
 
-var RequestBuilder = function() {
+var Request = function() {
 	this.request = {};
 };
 
-RequestBuilder.prototype.reset = function() {
+Request.prototype.reset = function() {
 	this.request = {};
 	return this;
 };
 
-RequestBuilder.prototype.view = function(view) {
+Request.prototype.view = function(view) {
 	this.request.viewId = `ga:${view}`;
 	return this;
 };
 
-RequestBuilder.prototype.hideTotals = function() {
+Request.prototype.hideTotals = function() {
 	this.request.hideTotals = true;
 	return this;
 };
 
-RequestBuilder.prototype.hideValueRanges = function() {
+Request.prototype.hideValueRanges = function() {
 	this.request.hideValueRanges = true;
 	return this;
 };
 
-RequestBuilder.prototype.pageSize = function(size) {
+Request.prototype.pageSize = function(size) {
 	if (size == null) {
 		delete this.request.pageSize;
 		return this;
@@ -35,7 +35,11 @@ RequestBuilder.prototype.pageSize = function(size) {
 	return this;
 };
 
-RequestBuilder.prototype.pageToken = function(token) {
+Request.prototype.results = function(count) {
+	return this.pageSize(count);
+}
+
+Request.prototype.pageToken = function(token) {
 	if (token == null) {
 		delete this.request.pageToken;
 		return this;
@@ -44,21 +48,21 @@ RequestBuilder.prototype.pageToken = function(token) {
 	return this;
 };
 
-RequestBuilder.prototype.make = function() {
+Request.prototype.make = function() {
 	return JSON.parse(JSON.stringify(this.request));
 };
 
-RequestBuilder.prototype.fastSampling = function() {
+Request.prototype.fastSampling = function() {
 	this.request.samplingLevel = "SMALL";
 	return this;
 };
 
-RequestBuilder.prototype.preciseSampling = function() {
+Request.prototype.preciseSampling = function() {
 	this.request.samplingLevel = "LARGE";
 	return this;
 };
 
-RequestBuilder.prototype.dateRange = function(params) {
+Request.prototype.dateRange = function(params) {
 	var dateRange = {};
 	if (params.from) {
 		dateRange.startDate = params.from;
@@ -73,7 +77,7 @@ RequestBuilder.prototype.dateRange = function(params) {
 	return this;
 };
 
-RequestBuilder.prototype.dimension = function(dimension, histogramBuckets) {
+Request.prototype.dimension = function(dimension, histogramBuckets) {
 	var obj = { name: `ga:${dimension}` };
 	if (histogramBuckets) {
 		obj.histogramBuckets = histogramBuckets.forEach(function(bucket) {
@@ -87,7 +91,7 @@ RequestBuilder.prototype.dimension = function(dimension, histogramBuckets) {
 	return this;
 };
 
-RequestBuilder.prototype.dimensions = function(dimensions) {
+Request.prototype.dimensions = function(dimensions) {
 	dimensions.forEach(
 		function(obj) {
 			this.dimension(obj);
@@ -96,12 +100,12 @@ RequestBuilder.prototype.dimensions = function(dimensions) {
 	return this;
 };
 
-RequestBuilder.prototype.clearDimensions = function() {
+Request.prototype.clearDimensions = function() {
 	delete this.request.dimensions;
 	return this;
 };
 
-RequestBuilder.prototype.metric = function(metric, type) {
+Request.prototype.metric = function(metric, type) {
 	if (!this.request.metrics) {
 		this.request.metrics = [];
 	}
@@ -112,7 +116,7 @@ RequestBuilder.prototype.metric = function(metric, type) {
 	return this;
 };
 
-RequestBuilder.prototype.metrics = function(metrics) {
+Request.prototype.metrics = function(metrics) {
 	metrics.forEach(
 		function(obj) {
 			this.metric(obj);
@@ -121,7 +125,7 @@ RequestBuilder.prototype.metrics = function(metrics) {
 	return this;
 };
 
-RequestBuilder.prototype.removeDimension = function(name) {
+Request.prototype.removeDimension = function(name) {
 	if (!this.request.dimensions) {
 		return this;
 	}
@@ -137,7 +141,7 @@ RequestBuilder.prototype.removeDimension = function(name) {
 	return this;
 };
 
-RequestBuilder.prototype.removeDimensions = function(dimensions) {
+Request.prototype.removeDimensions = function(dimensions) {
 	dimensions.forEach(
 		function(name) {
 			this.removeDimension(name);
@@ -146,32 +150,32 @@ RequestBuilder.prototype.removeDimensions = function(dimensions) {
 	return this;
 };
 
-RequestBuilder.prototype.metricInt = function(metric) {
+Request.prototype.metricInt = function(metric) {
 	return this.metric(metric, "INTEGER");
 };
 
-RequestBuilder.prototype.metricFloat = function(metric) {
+Request.prototype.metricFloat = function(metric) {
 	return this.metric(metric, "FLOAT");
 };
 
-RequestBuilder.prototype.metricCurrency = function(metric) {
+Request.prototype.metricCurrency = function(metric) {
 	return this.metric(metric, "CURRENCY");
 };
 
-RequestBuilder.prototype.metricPercent = function(metric) {
+Request.prototype.metricPercent = function(metric) {
 	return this.metric(metric, "PERCENT");
 };
 
-RequestBuilder.prototype.metricTime = function(metric) {
+Request.prototype.metricTime = function(metric) {
 	return this.metric(metric, "TIME");
 };
 
-RequestBuilder.prototype.clearMetrics = function() {
+Request.prototype.clearMetrics = function() {
 	delete this.request.metrics;
 	return this;
 };
 
-RequestBuilder.prototype.removeeMtric = function(name) {
+Request.prototype.removeeMtric = function(name) {
 	if (!this.request.metrics) {
 		return this;
 	}
@@ -184,7 +188,7 @@ RequestBuilder.prototype.removeeMtric = function(name) {
 	return this;
 };
 
-RequestBuilder.prototype.removeMetrics = function(metrics) {
+Request.prototype.removeMetrics = function(metrics) {
 	metrics.forEach(
 		function(name) {
 			this.removeMetric(name);
@@ -193,7 +197,7 @@ RequestBuilder.prototype.removeMetrics = function(metrics) {
 	return this;
 };
 
-RequestBuilder.prototype.filtersExpression = function(expression) {
+Request.prototype.filtersExpression = function(expression) {
 	if (expression == null) {
 		delete this.request.filtersExpression;
 		return this;
@@ -202,7 +206,7 @@ RequestBuilder.prototype.filtersExpression = function(expression) {
 	return this;
 };
 
-RequestBuilder.prototype.orderBy = function(params) {
+Request.prototype.orderBy = function(params) {
 	if (!this.request.orderBys) {
 		this.request.orderBys = [];
 	}
@@ -214,51 +218,51 @@ RequestBuilder.prototype.orderBy = function(params) {
 	return this;
 };
 
-RequestBuilder.prototype.orderAsc = function(name) {
+Request.prototype.orderAsc = function(name) {
 	return this.orderBy({
 		name: name,
 		order: "ASCENDING"
 	});
 };
 
-RequestBuilder.prototype.orderDesc = function(name) {
+Request.prototype.orderDesc = function(name) {
 	return this.orderBy({
 		name: name
 	});
 };
 
-RequestBuilder.prototype.orderHistogram = function(name) {
+Request.prototype.orderHistogram = function(name) {
 	return this.orderBy({
 		name: name,
 		type: "HISTOGRAM_BUCKET"
 	});
 };
 
-RequestBuilder.prototype.metricOrFilters = function(filters) {
+Request.prototype.metricOrFilters = function(filters) {
 	return this.filters("metricFilterClauses", filters, "OR");
 };
 
-RequestBuilder.prototype.metricFilters = function(filters, operator = "AND") {
+Request.prototype.metricFilters = function(filters, operator = "AND") {
 	return this.filters("metricFilterClauses", filters);
 };
 
-RequestBuilder.prototype.metricFilter = function(filter) {
+Request.prototype.metricFilter = function(filter) {
 	return this.filter("metricFilterClauses", filter);
 };
 
-RequestBuilder.prototype.dimensionOrFilters = function(filters) {
+Request.prototype.dimensionOrFilters = function(filters) {
 	return this.filters("dimensionFilterClauses", filters, "OR");
 };
 
-RequestBuilder.prototype.dimensionFilters = function(filters, operator = "AND") {
+Request.prototype.dimensionFilters = function(filters, operator = "AND") {
 	return this.filters("dimensionFilterClauses", filters);
 };
 
-RequestBuilder.prototype.dimensionFilter = function(filter) {
+Request.prototype.dimensionFilter = function(filter) {
 	return this.filter("dimensionFilterClauses", filter);
 };
 
-RequestBuilder.prototype.filters = function(type, filters, operator = "AND") {
+Request.prototype.filters = function(type, filters, operator = "AND") {
 	if (!this.request[type]) {
 		this.request[type] = [];
 	}
@@ -273,13 +277,13 @@ RequestBuilder.prototype.filters = function(type, filters, operator = "AND") {
 	return this;
 };
 
-RequestBuilder.prototype.filter = function(type, filter) {
+Request.prototype.filter = function(type, filter) {
 	this.filters(type, [filter]);
 	return this;
 };
 
-RequestBuilder.prototype.clone = function(type, filter) {
+Request.prototype.clone = function(type, filter) {
 	return cloneDeep(this);
 };
 
-module.exports = RequestBuilder;
+module.exports = Request;
