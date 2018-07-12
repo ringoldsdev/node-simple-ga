@@ -56,10 +56,15 @@ MetricFilterBuilder.prototype.equals = function(value) {
 	return this.equalTo(value);
 };
 
-MetricFilterBuilder.prototype.inverse = function() {
+MetricFilterBuilder.prototype.not = function() {
 	this.filter.not = true;
 	return this;
 };
+
+MetricFilterBuilder.prototype.inverse = function() {
+	return this.not();
+};
+
 
 MetricFilterBuilder.prototype.make = function() {
 	return JSON.parse(JSON.stringify(this.filter));

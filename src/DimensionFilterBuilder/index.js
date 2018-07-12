@@ -10,9 +10,13 @@ DimensionFilterBuilder.prototype.dimension = function(name) {
 	return this;
 };
 
-DimensionFilterBuilder.prototype.inverse = function() {
+DimensionFilterBuilder.prototype.not = function() {
 	this.filter.not = true;
 	return this;
+};
+
+DimensionFilterBuilder.prototype.inverse = function() {
+	return this.not();
 };
 
 DimensionFilterBuilder.prototype.matchRegex = function(regex) {
@@ -57,16 +61,44 @@ DimensionFilterBuilder.prototype.equalsTo = function(value) {
 	return this;
 };
 
+DimensionFilterBuilder.prototype.eq = function(value) {
+	return this.equalsTo(value);
+};
+
 DimensionFilterBuilder.prototype.greaterThan = function(value) {
 	this.filter.operator = "NUMERIC_GREATER_THAN";
 	this.filter.expressions = [value.toString()];
 	return this;
 };
 
+DimensionFilterBuilder.prototype.gt = function(value) {
+	return this.greaterThan(value);
+};
+
+DimensionFilterBuilder.prototype.greaterThanEqualTo = function(value) {
+	return this.greaterThan(value-1);
+};
+
+DimensionFilterBuilder.prototype.gte = function(value) {
+	return this.greaterThan(value-1);
+};
+
 DimensionFilterBuilder.prototype.lessThan = function(value) {
 	this.filter.operator = "NUMERIC_LESS_THAN";
 	this.filter.expressions = [value.toString()];
 	return this;
+};
+
+DimensionFilterBuilder.prototype.lt = function(value) {
+	return this.lessThan(value);
+};
+
+DimensionFilterBuilder.prototype.lessThanEqualTo = function(value) {
+	return this.lessThan(value+1);
+};
+
+DimensionFilterBuilder.prototype.lte = function(value) {
+	return this.lessThan(value+1);
 };
 
 DimensionFilterBuilder.prototype.inList = function(value) {
