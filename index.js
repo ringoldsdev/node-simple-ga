@@ -23,11 +23,21 @@ const GAOOP = function(params) {
 	this.analytics = google.analyticsreporting("v4");
 };
 
+const castValue = function(value) {
+	var newValue = Number(value);
+
+	if(isNaN(newValue)) {
+		return value;
+	}
+
+	return newValue;
+}
+
 const makeKeyValueArray = function(keys, values) {
 	return Object.assign.apply(
 		{},
 		keys.map((v, i) => ({
-			[v]: values[i]
+			[v]: castValue(values[i])
 		}))
 	);
 };
@@ -117,57 +127,6 @@ GAOOP.prototype.run = async function(request, params = {}) {
 	return processedResult;
 
 };
-
-// GAOOP.prototype.run = function(request, params = {}) {
-// 	var that = this;
-// 	var currentPage = params.currentPage ? params.currentPage : 1;
-
-// 	return new Promise(async function(resolve, reject) {
-
-// 		var data = [];
-
-// 		var response = await makeRequest(that.client, that.analytics, request);
-		
-// 		var report = response.data.reports[0];
-
-// 		report.data.rows.forEach(function(entry) {
-
-// 			var metricColumnNames = report.columnHeader.metricHeader.metricHeaderEntries.map(function(entry) {
-// 				return entry.name.substring(3);
-// 			});
-
-// 			var dimensionColumnNames = report.columnHeader.dimensions.map(function(entry) {
-// 				return entry.substring(3);
-// 			});
-
-// 			data.push({
-// 				dimensions: makeKeyValueArray(dimensionColumnNames, entry.dimensions),
-// 				metrics: makeKeyValueArray(metricColumnNames, entry.metrics[0].values)
-// 			});
-
-// 		});
-
-// 		if (!params.pages) {
-// 			return resolve(data);
-// 		}
-
-// 		if (currentPage === params.pages) {
-// 			return resolve(data);
-// 		}
-
-// 		if (report.nextPageToken) {
-// 			request.setPageToken(report.nextPageToken);
-// 			data = data.concat(
-// 				await that.run(request, {
-// 					pages: params.pages,
-// 					currentPage: currentPage + 1
-// 				})
-// 			);
-// 		}
-
-// 		resolve(data);
-// 	});
-// };
 
 module.exports = {
 	GAOOP,
