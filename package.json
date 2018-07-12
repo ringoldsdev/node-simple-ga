@@ -1,25 +1,34 @@
 {
-  "name": "gaoop",
+  "name": "simple-ga",
   "version": "0.1.5",
-  "description": "A NodeJs library for Google Analytics Reporting API with OOP in mind",
+  "description": "A simple to use NodeJs package for the Google Analytics Reporting API",
   "keywords": [
-    "analytics",
+    "nodejs",
     "google analytics",
     "ga",
+    "analytics api",
     "google analytics api",
-    "analytics reporting api v4"
+    "analytics reporting api v4",
+    "universal analytics",
+    "analytics v4",
+    "reporting api v4",
+    "google analytics client"
   ],
   "main": "index.js",
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha",
     "prettier": "prettier --no-config --print-width 120 --parser flow --use-tabs --write *.js **/*.js"
   },
-  "homepage": "https://github.com/lescinskis-com/gaoop#readme",
+  "homepage": "https://github.com/lescinskis-com/simple-ga#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lescinskis-com/gaoop"
+    "url": "https://github.com/lescinskis-com/simple-ga"
   },
-  "author": "Ringolds Lescinskis",
+  "author": {
+    "name": "Ringolds Lescinskis",
+    "email": "ringolds@lescinskis.com",
+    "url": "https://www.lescinskis.com"
+  },
   "license": "MIT",
   "dependencies": {
     "clone-deep": "^4.0.0",
