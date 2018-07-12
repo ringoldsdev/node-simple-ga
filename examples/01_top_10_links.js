@@ -1,16 +1,12 @@
 require("dotenv").load();
 
 const path = require("path");
-const { GAOOP, RequestBuilder } = require("../index.js");
+const { SimpleGA, Request } = require("../index.js");
 
 (async function() {
-	var GoogleAnalytics = new GAOOP({
-		keyFile: path.join(__dirname, "../key.json")
-	});
+	var analytics = new SimpleGA(path.join(__dirname, "../key.json"));
 
-	var request = new RequestBuilder();
-
-	request
+	var request = (new Request())
 		.view(process.env.GA_VIEW_ID)
 		.pageSize(10)
 		.dimension("pagePath")
@@ -19,7 +15,7 @@ const { GAOOP, RequestBuilder } = require("../index.js");
 
 	try {
 		// Make the request and fetch data
-		var data = await GoogleAnalytics.run(request);
+		var data = await analytics.run(request);
 		console.log(data);
 		// ToDo  Pagination
 	} catch (err) {
