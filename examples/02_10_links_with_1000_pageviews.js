@@ -1,7 +1,7 @@
 require("dotenv").load();
 
 const path = require("path");
-const { GAOOP, RequestBuilder } = require("../index.js");
+const { GAOOP, RequestBuilder, MetricFilterBuilder } = require("../index.js");
 
 (async function() {
 	var GoogleAnalytics = new GAOOP({
@@ -16,6 +16,11 @@ const { GAOOP, RequestBuilder } = require("../index.js");
 		.dimension("pagePath")
 		.metric("pageviews")
 		.orderDesc("pageviews");
+
+	var pageviewsFilter = new MetricFilterBuilder();
+	pageviewsFilter.metric("pageviews").lessThan(1001);
+
+	request.metricFilter(pageviewsFilter);
 
 	try {
 		// Make the request and fetch data

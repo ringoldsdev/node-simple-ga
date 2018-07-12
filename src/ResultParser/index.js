@@ -1,13 +1,13 @@
 module.exports = {
 	cleanKeys: function(columns) {
 		return columns.map(function(column) {
-			return column.replace(/^ga:/,"");
+			return column.replace(/^ga:/, "");
 		});
 	},
 	castValue: function(value) {
 		var newValue = Number(value);
 
-		if(isNaN(newValue)) {
+		if (isNaN(newValue)) {
 			return value;
 		}
 

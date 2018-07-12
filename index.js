@@ -27,7 +27,6 @@ const GAOOP = function(params) {
 GAOOP.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 	var that = this;
 	return new Promise(function(resolve, reject) {
-
 		var entries = [];
 		var headers = null;
 
@@ -45,15 +44,15 @@ GAOOP.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 
 				var report = response.data.reports[0];
 
-				if(currentPage == 1) {
-					var metricColumnHeader = report.columnHeader.metricHeader.metricHeaderEntries.map(function(entry){
+				if (currentPage == 1) {
+					var metricColumnHeader = report.columnHeader.metricHeader.metricHeaderEntries.map(function(entry) {
 						return entry.name;
 					});
 
 					headers = {
 						dimensions: ResultParser.cleanKeys(report.columnHeader.dimensions),
 						metrics: ResultParser.cleanKeys(metricColumnHeader)
-					}
+					};
 				}
 
 				report.data.rows.forEach(function(entry) {
@@ -65,35 +64,37 @@ GAOOP.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 
 				// If page count is not specified, stop here
 				if (!params.pages) {
-					return resolve({headers, entries});
+					return resolve({ headers, entries });
 				}
 
 				// If we're at the last page, stop
 				if (currentPage === params.pages) {
-					return resolve({headers, entries});
+					return resolve({ headers, entries });
 				}
 
 				// If there are more pages, get the results
 				if (report.nextPageToken) {
 					request.setPageToken(report.nextPageToken);
-					var requestedData = await that.runRaw(request, {
-						pages: params.pages
-					}, currentPage + 1);
+					var requestedData = await that.runRaw(
+						request,
+						{
+							pages: params.pages
+						},
+						currentPage + 1
+					);
 					entries = entries.concat(requestedData.entries);
 				}
 
-				return resolve({headers, entries});
+				return resolve({ headers, entries });
 			}
 		);
 	});
 };
 
-
 GAOOP.prototype.run = async function(request, params = {}) {
-	
 	var result = await this.runRaw(request, params);
 
-	if(params.rawResults) {
+	if (params.rawResults) {
 		return result;
 	}
 
@@ -102,12 +103,11 @@ GAOOP.prototype.run = async function(request, params = {}) {
 	result.entries.forEach(function(entry) {
 		processedResult.push({
 			dimensions: ResultParser.mergeKeyValueArrays(result.headers.dimensions, entry.dimensions),
-			metrics: ResultParser.mergeKeyValueArrays(result.headers.metrics, entry.metrics)				
+			metrics: ResultParser.mergeKeyValueArrays(result.headers.metrics, entry.metrics)
 		});
 	});
 
 	return processedResult;
-
 };
 
 module.exports = {
