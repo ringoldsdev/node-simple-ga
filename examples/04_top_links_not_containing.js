@@ -25,7 +25,6 @@ const { SimpleGA, Request, DimensionFilter } = require("../index.js");
 		// Make the request and fetch data
 		var data = await analytics.run(request);
 		console.log(data);
-		// ToDo  Pagination
 	} catch (err) {
 		console.error(err);
 	}
