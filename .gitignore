@@ -1,4 +1,5 @@
 node_modules/
+usage/
 .npm
 .env
 key.json
