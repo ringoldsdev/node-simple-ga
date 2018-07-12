@@ -1,7 +1,7 @@
 require("dotenv").load();
 
 const path = require("path");
-const { GAOOP, RequestBuilder, MetricFilterBuilder, DimensionFilterBuilder } = require("../index.js");
+const { GAOOP, RequestBuilder } = require("../index.js");
 
 (async function() {
 	var GoogleAnalytics = new GAOOP({
