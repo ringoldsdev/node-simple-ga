@@ -18,7 +18,7 @@ const { GAOOP, RequestBuilder, MetricFilterBuilder } = require("../index.js");
 		.orderDesc("pageviews");
 
 	var pageviewsFilter = new MetricFilterBuilder();
-	pageviewsFilter.metric("pageviews").lessThan(1001);
+	pageviewsFilter.metric("pageviews").lessThanEqualTo(1000);
 
 	request.metricFilter(pageviewsFilter);
 
