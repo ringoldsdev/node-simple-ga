@@ -9,7 +9,7 @@ It should be much easier to retrieve data from the Google Analytics API and this
 Getting the top 10 links is as easy as this:
 
 ```JavaScript
-const analytics = new SimpleGA("./key.json");
+const analytics = new SimpleGoogleAnalytics("./key.json");
 
 var request = (new Request())
 	.view(12345678)
