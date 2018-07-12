@@ -2,6 +2,7 @@ const ClientFactory = require("./src/ClientFactory");
 const RequestBuilder = require("./src/RequestBuilder");
 const DimensionFilterBuilder = require("./src/DimensionFilterBuilder");
 const MetricFilterBuilder = require("./src/MetricFilterBuilder");
+const ResultParser = require("./src/ResultParser");
 
 const { google } = require("googleapis");
 const cloneDeep = require("clone-deep");
@@ -21,25 +22,6 @@ const GAOOP = function(params) {
 	}
 
 	this.analytics = google.analyticsreporting("v4");
-};
-
-const castValue = function(value) {
-	var newValue = Number(value);
-
-	if(isNaN(newValue)) {
-		return value;
-	}
-
-	return newValue;
-}
-
-const makeKeyValueArray = function(keys, values) {
-	return Object.assign.apply(
-		{},
-		keys.map((v, i) => ({
-			[v]: castValue(values[i])
-		}))
-	);
 };
 
 GAOOP.prototype.runRaw = function(request, params = {}, currentPage = 1) {
@@ -64,13 +46,13 @@ GAOOP.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 				var report = response.data.reports[0];
 
 				if(currentPage == 1) {
+					var metricColumnHeader = report.columnHeader.metricHeader.metricHeaderEntries.map(function(entry){
+						return entry.name;
+					});
+
 					headers = {
-						dimensions: report.columnHeader.dimensions.map(function(entry) {
-							return entry.substring(3);
-						}),
-						metrics: report.columnHeader.metricHeader.metricHeaderEntries.map(function(entry) {
-							return entry.name.substring(3);
-						})
+						dimensions: QueryParser.cleanKeys(report.columnHeader.dimensions),
+						metrics: QueryParser.cleanKeys(metricColumnHeader)
 					}
 				}
 
@@ -119,8 +101,8 @@ GAOOP.prototype.run = async function(request, params = {}) {
 
 	result.entries.forEach(function(entry) {
 		processedResult.push({
-			dimensions: makeKeyValueArray(result.headers.dimensions, entry.dimensions),
-			metrics: makeKeyValueArray(result.headers.dimensions, entry.metrics)				
+			dimensions: QueryParser.mergeKeyValueArrays(result.headers.dimensions, entry.dimensions),
+			metrics: QueryParser.mergeKeyValueArrays(result.headers.dimensions, entry.metrics)				
 		});
 	});
 
