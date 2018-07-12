@@ -7,15 +7,20 @@ const ResultParser = require("./src/ResultParser");
 const { google } = require("googleapis");
 const cloneDeep = require("clone-deep");
 
-const SimpleGA = function(params) {
+const SimpleGA = function(param) {
 	this.client = null;
 
-	if (params.key) {
-		this.client = Client.createFromKey(params.key);
+	if(typeof param === "string") {
+		this.client = Client.createFromKeyFile(param);
+	} else {
+		if (param.key) {
+			this.client = Client.createFromKey(param.key);
+		}
+		if (param.keyFile) {
+			this.client = Client.createFromKeyFile(param.keyFile);
+		}
 	}
-	if (params.keyFile) {
-		this.client = Client.createFromKeyFile(params.keyFile);
-	}
+
 
 	if (!this.client) {
 		throw Error("Google Analytics client wasn't created!");
