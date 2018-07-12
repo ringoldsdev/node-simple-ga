@@ -64,8 +64,6 @@ const { SimpleGoogleAnalytics, Request, MetricFilter } = require("simple-google-
 		.metric("pageviews")
 		.orderDesc("pageviews");
 
-	request.metricFilter(pageviewsFilter);
-
 	try {
 		var data = await analytics.run(request);
 		console.log(data);
