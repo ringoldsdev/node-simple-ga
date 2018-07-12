@@ -1,27 +1,13 @@
 // https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet
 // https://developers.google.com/analytics/devguides/reporting/core/dimsmets
-
-var defaultRequest = {
-	viewId: null,
-	dateRanges: [],
-	metrics: [],
-	dimensions: [],
-	orderBys: [],
-	dimensionFilterClauses: [],
-	metricFilterClauses: [],
-	filtersExpression: null,
-	hideTotals: true,
-	hideValueRanges: true,
-	pageSize: 10,
-	pageToken: "0"
-};
+const cloneDeep = require("clone-deep");
 
 var RequestBuilder = function() {
-	this.request = defaultRequest;
+	this.request = {};
 };
 
 RequestBuilder.prototype.reset = function() {
-	this.request = defaultRequest;
+	this.request = {};
 	return this;
 };
 
@@ -30,22 +16,30 @@ RequestBuilder.prototype.setView = function(view) {
 	return this;
 };
 
-RequestBuilder.prototype.showTotals = function() {
-	this.request.hideTotals = false;
+RequestBuilder.prototype.hideTotals = function() {
+	this.request.hideTotals = true;
 	return this;
 };
 
-RequestBuilder.prototype.showValueRanges = function() {
-	this.request.hideValueRanges = false;
+RequestBuilder.prototype.hideValueRanges = function() {
+	this.request.hideValueRanges = true;
 	return this;
 };
 
 RequestBuilder.prototype.setPageSize = function(size) {
+	if(size == null) {
+		delete this.request.pageSize;
+		return this;
+	}
 	this.request.pageSize = size;
 	return this;
 };
 
 RequestBuilder.prototype.setPageToken = function(token) {
+	if(token == null) {
+		delete this.request.pageToken;
+		return this;
+	}
 	this.request.pageToken = token;
 	return this;
 };
@@ -72,6 +66,9 @@ RequestBuilder.prototype.addDate = function(params) {
 	if (params.to) {
 		dateRange.endDate = params.to;
 	}
+	if(!this.request.dateRanges) {
+		this.request.dateRanges = [];
+	}
 	this.request.dateRanges.push(dateRange);
 	return this;
 };
@@ -82,6 +79,9 @@ RequestBuilder.prototype.addDimension = function(dimension, histogramBuckets) {
 		obj.histogramBuckets = histogramBuckets.forEach(function(bucket) {
 			return bucket.toString();
 		});
+	}
+	if(!this.request.dimensions) {
+		this.request.dimensions = [];
 	}
 	this.request.dimensions.push(obj);
 	return this;
@@ -97,11 +97,14 @@ RequestBuilder.prototype.addDimensions = function(dimensions) {
 };
 
 RequestBuilder.prototype.clearDimensions = function() {
-	this.request.dimensions = [];
+	delete this.request.dimensions;
 	return this;
 };
 
 RequestBuilder.prototype.addMetric = function(metric, type) {
+	if(!this.request.metrics) {
+		this.request.metrics = [];
+	}
 	this.request.metrics.push({
 		expression: `ga:${metric}`,
 		formattingType: type ? type : "INTEGER"
@@ -119,9 +122,18 @@ RequestBuilder.prototype.addMetrics = function(metrics) {
 };
 
 RequestBuilder.prototype.removeDimension = function(name) {
+	if(!this.request.dimensions) {
+		return this;
+	};
+
 	this.request.dimensions = this.request.dimensions.filter(function(dimension) {
 		return dimension.name !== `ga:${name}`;
 	});
+
+	if(this.request.dimensions.length == 0) {
+		this.clearDimensions();
+	}
+
 	return this;
 };
 
@@ -155,14 +167,20 @@ RequestBuilder.prototype.addMetricTime = function(metric) {
 };
 
 RequestBuilder.prototype.clearMetrics = function() {
-	this.request.metrics = [];
+	delete this.request.metrics;
 	return this;
 };
 
 RequestBuilder.prototype.removeMetric = function(name) {
+	if(!this.request.metrics) {
+		return this;
+	};
 	this.request.metrics = this.request.metrics.filter(function(metric) {
 		return metric.expression !== `ga:${name}`;
 	});
+	if(this.request.metrics.length == 0) {
+		this.clearMetrics();
+	}
 	return this;
 };
 
@@ -186,6 +204,9 @@ RequestBuilder.prototype.clearFiltersExpression = function() {
 };
 
 RequestBuilder.prototype.orderBy = function(params) {
+	if(!this.request.orderBys) {
+		this.request.orderBys = [];
+	}
 	this.request.orderBys.push({
 		fieldName: `ga:${params.name}`,
 		orderType: params.type ? params.type : "VALUE",
@@ -218,10 +239,7 @@ RequestBuilder.prototype.addMetricOrFilters = function(filters) {
 	return this.addFilters("metricFilterClauses", filters, "OR");
 };
 
-RequestBuilder.prototype.addMetricFilters = function(
-	filters,
-	operator = "AND"
-) {
+RequestBuilder.prototype.addMetricFilters = function(filters, operator = "AND") {
 	return this.addFilters("metricFilterClauses", filters);
 };
 
@@ -233,10 +251,7 @@ RequestBuilder.prototype.addDimensionOrFilters = function(filters) {
 	return this.addFilters("dimensionFilterClauses", filters, "OR");
 };
 
-RequestBuilder.prototype.addDimensionFilters = function(
-	filters,
-	operator = "AND"
-) {
+RequestBuilder.prototype.addDimensionFilters = function(filters, operator = "AND") {
 	return this.addFilters("dimensionFilterClauses", filters);
 };
 
@@ -244,11 +259,11 @@ RequestBuilder.prototype.addDimensionFilter = function(filter) {
 	return this.addFilter("dimensionFilterClauses", filter);
 };
 
-RequestBuilder.prototype.addFilters = function(
-	type,
-	filters,
-	operator = "AND"
-) {
+RequestBuilder.prototype.addFilters = function(type, filters, operator = "AND") {
+	if(!this.request[type]) {
+		this.request[type] = [];
+	};
+
 	this.request[type].push({
 		operator,
 		filters: filters.map(function(filter) {
@@ -260,12 +275,12 @@ RequestBuilder.prototype.addFilters = function(
 };
 
 RequestBuilder.prototype.addFilter = function(type, filter) {
-	this.request[type].push({
-		operator: "AND",
-		filters: [filter.make()]
-	});
-
+	this.addFilters(type,[filter]);
 	return this;
+};
+
+RequestBuilder.prototype.clone = function(type, filter) {
+	return cloneDeep(this);
 };
 
 module.exports = RequestBuilder;
