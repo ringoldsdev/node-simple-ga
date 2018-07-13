@@ -38,6 +38,19 @@ Request.prototype.pageToken = function(token) {
 	return this;
 };
 
+Request.prototype.removePageToken = function(token) {
+	return this.pageToken(null);
+};
+
+Request.prototype.offset = function(value) {
+	return this.pageToken(value);
+};
+
+Request.prototype.removeOffset = function(value) {
+	return this.pageToken(null);
+};
+
+
 Request.prototype.make = function() {
 	return JSON.parse(JSON.stringify(this.request));
 };
