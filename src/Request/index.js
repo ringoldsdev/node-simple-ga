@@ -16,16 +16,6 @@ Request.prototype.view = function(view) {
 	return this;
 };
 
-Request.prototype.hideTotals = function() {
-	this.request.hideTotals = true;
-	return this;
-};
-
-Request.prototype.hideValueRanges = function() {
-	this.request.hideValueRanges = true;
-	return this;
-};
-
 Request.prototype.pageSize = function(size) {
 	if (size == null) {
 		delete this.request.pageSize;
