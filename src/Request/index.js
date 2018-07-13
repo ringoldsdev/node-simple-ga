@@ -52,12 +52,12 @@ Request.prototype.make = function() {
 	return JSON.parse(JSON.stringify(this.request));
 };
 
-Request.prototype.fastSampling = function() {
+Request.prototype.fast = function() {
 	this.request.samplingLevel = "SMALL";
 	return this;
 };
 
-Request.prototype.preciseSampling = function() {
+Request.prototype.precise = function() {
 	this.request.samplingLevel = "LARGE";
 	return this;
 };
