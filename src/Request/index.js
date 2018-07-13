@@ -119,7 +119,7 @@ Request.prototype.clearDimensions = function() {
 
 Request.prototype.removeDimension = function(name) {
 	name = ApiHelper.generateApiName(name);
-	return this.remove("dimensions", "name");
+	return this.remove("dimensions", "name", name);
 };
 
 Request.prototype.removeDimensions = function(...values) {
@@ -166,7 +166,7 @@ Request.prototype.clearMetrics = function() {
 
 Request.prototype.removeMetric = function(name) {
 	name = ApiHelper.generateApiName(name);
-	return this.remove("metrics", "expression");
+	return this.remove("metrics", "expression", name);
 };
 
 Request.prototype.removeMetrics = function(...values) {

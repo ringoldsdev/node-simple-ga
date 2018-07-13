@@ -10,8 +10,10 @@ const { SimpleGoogleAnalytics, Request, MetricFilter } = require("../index.js");
 		.view(process.env.GA_VIEW_ID)
 		.results(10)
 		.dimensions("pagePath","pageTitle")
-		.metric("pageviews")
-		.metric("users")
+		.metrics("pageviews", "users")
+		.removeMetric("users")
+		.removeDimension("pageTitle")
+		// .metric("users")
 		.orderDesc("pageviews")
 		.orderAsc("users")
 		.removeOrder("users");
@@ -21,7 +23,7 @@ const { SimpleGoogleAnalytics, Request, MetricFilter } = require("../index.js");
 		.lessThan(2500);
 
 	request.metricFilter(filter);
-
+	
 	try {
 		// Make the request and fetch data
 		// console.log(request.make());

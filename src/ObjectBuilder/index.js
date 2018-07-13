@@ -53,6 +53,7 @@ ObjectBuilder.prototype.appendMultiple = function(key, values) {
 }
 
 ObjectBuilder.prototype.remove = function(key, param, value) {
+
 	if (!this.data[key]) {
 		return this;
 	}
@@ -61,7 +62,7 @@ ObjectBuilder.prototype.remove = function(key, param, value) {
 		return entry[param] !== value;
 	});
 
-	if (this.data[key].length == 0) {
+	if (this.data.length == 0) {
 		this.clear(key);
 	}
 
