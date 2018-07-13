@@ -147,7 +147,10 @@ Request.prototype.removeDimension = function(name) {
 	return this;
 };
 
-Request.prototype.removeDimensions = function(dimensions) {
+Request.prototype.removeDimensions = function(...dimensions) {
+	if(dimensions.length === 1 && Array.isArray(dimensions[0])) {
+		dimensions = dimensions[0]
+	}
 	dimensions.forEach(
 		function(name) {
 			this.removeDimension(name);
@@ -181,7 +184,7 @@ Request.prototype.clearMetrics = function() {
 	return this;
 };
 
-Request.prototype.removeeMtric = function(name) {
+Request.prototype.removeMtric = function(name) {
 	if (!this.request.metrics) {
 		return this;
 	}
@@ -195,6 +198,9 @@ Request.prototype.removeeMtric = function(name) {
 };
 
 Request.prototype.removeMetrics = function(metrics) {
+	if(metrics.length === 1 && Array.isArray(metrics[0])) {
+		metrics = metrics[0]
+	}
 	metrics.forEach(
 		function(name) {
 			this.removeMetric(name);
