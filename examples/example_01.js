@@ -19,6 +19,7 @@ const { SimpleGoogleAnalytics, Request } = require("../index.js");
 	try {
 		// Make the request and fetch data
 		// console.log(request.make());
+		// var data = await analytics.runRaw(request);
 		var data = await analytics.run(request);
 		console.log(data);
 	} catch (err) {

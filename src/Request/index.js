@@ -32,14 +32,9 @@ const makeFiltersObject = function(filters, operator = "OR") {
 	}
 }
 
-const makeObjects = function(values, fn) {
-	return values.map(function(value){
-		return fn(value);
-	});
-}
-
-Request.prototype.view = function(view) {
-	return this.set("viewId",ApiHelper.generateApiName(view));
+Request.prototype.view = function(viewId) {
+	viewId = ApiHelper.generateApiName(viewId);
+	return this.set("viewId", viewId);
 };
 
 Request.prototype.pageSize = function(size) {
@@ -94,7 +89,8 @@ Request.prototype.dateRange = function(params) {
 
 Request.prototype.dimension = function(dimension) {
 	dimension = ApiHelper.generateApiName(dimension);
-	return this.append("dimensions", makeDimensionObject(dimension));
+	dimension = makeDimensionObject(dimension);
+	return this.append("dimensions", dimension);
 };
 
 Request.prototype.histogram = function(dimension, histogramBuckets = null) {
@@ -102,13 +98,14 @@ Request.prototype.histogram = function(dimension, histogramBuckets = null) {
 		return bucket.toString();
 	});
 	dimension = ApiHelper.generateApiName(dimension);
-	return this.set("dimensions", [makeDimensionObject(dimension, histogramBuckets)]);
+	dimension = makeDimensionObject(dimension, histogramBuckets);
+	return this.set("dimensions", [dimension]);
 };
 
 Request.prototype.dimensions = function(...values) {
 	values = this.getValues(values);
-	values = makeObjects(values, ApiHelper.generateApiName);
-	values = makeObjects(values, makeDimensionObject);
+	values = values.map(ApiHelper.generateApiName);
+	values = values.map(makeDimensionObject);
 	return this.appendMultiple("dimensions",values);
 };
 
@@ -117,22 +114,25 @@ Request.prototype.clearDimensions = function() {
 };
 
 Request.prototype.removeDimension = function(name) {
-	return this.remove("dimensions", "name", ApiHelper.generateApiName(name));
+	name = ApiHelper.generateApiName(name);
+	return this.remove("dimensions", "name");
 };
 
 Request.prototype.removeDimensions = function(...values) {
-	values = this.getValues(values, ApiHelper.generateApiName);
+	values = this.getValues(values);
+	values = values.map(ApiHelper.generateApiName);
 	return this.removeMultiple("dimensions", "name", values);
 };
 
 Request.prototype.metric = function(name, type) {
-	return this.append("metrics", makeMetricObject(ApiHelper.generateApiName(name)));
+	name = ApiHelper.generateApiName(name);
+	return this.append("metrics", makeMetricObject(name));
 };
 
 Request.prototype.metrics = function(...values) {
 	values = this.getValues(values);
-	values = makeObjects(values, ApiHelper.generateApiName);
-	values = makeObjects(values, makeMetricObject);
+	values = values.map(ApiHelper.generateApiName);
+	values = values.map(makeMetricObject);
 	return this.appendMultiple("metrics", values);
 };
 
@@ -161,11 +161,13 @@ Request.prototype.clearMetrics = function() {
 };
 
 Request.prototype.removeMetric = function(name) {
-	return this.remove("metrics", "expression", ApiHelper.generateApiName(name));
+	name = ApiHelper.generateApiName(name);
+	return this.remove("metrics", "expression");
 };
 
 Request.prototype.removeMetrics = function(...values) {
-	values = this.getValues(values, ApiHelper.generateApiName);
+	values = this.getValues(values);
+	values = values.map(ApiHelper.generateApiName);
 	return this.removeMultiple("dimensions", "name", values);
 };
 
@@ -202,11 +204,13 @@ Request.prototype.orderHistogram = function(name) {
 };
 
 Request.prototype.removeOrder = function(name) {
-	return this.remove("orderBys", "fieldName", ApiHelper.generateApiName(name));
+	name = ApiHelper.generateApiName(name);
+	return this.remove("orderBys", "fieldName", name);
 };
 
 Request.prototype.removeOrders = function(...values) {
-	values = this.getValues(values, ApiHelper.generateApiName);
+	values = this.getValues(values);
+	values = values.map(ApiHelper.generateApiName);
 	return this.removeMultiple("orderBys", "fieldName", values);
 };
 
@@ -235,11 +239,13 @@ Request.prototype.dimensionFilter = function(filter) {
 };
 
 Request.prototype.filters = function(type, filters) {
-	return this.append(type, makeFiltersObject(filters));
+	filters = makeFiltersObject(filters);
+	return this.append(type, filters);
 };
 
 Request.prototype.andFilters = function(type, filters) {
-	return this.append(type, makeFiltersObject(filters, "AND"));
+	filters = makeFiltersObject(filters, "AND");
+	return this.append(type, filters);
 };
 
 Request.prototype.filter = function(type, filter) {
