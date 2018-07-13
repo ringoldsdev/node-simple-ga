@@ -1,7 +1,7 @@
 require("dotenv").load();
 
 const path = require("path");
-const { SimpleGoogleAnalytics, Request } = require("../index.js");
+const { SimpleGoogleAnalytics, Request, MetricFilter } = require("../index.js");
 
 (async function() {
 	var analytics = new SimpleGoogleAnalytics(path.join(__dirname, "../key.json"));
@@ -15,6 +15,12 @@ const { SimpleGoogleAnalytics, Request } = require("../index.js");
 		.orderDesc("pageviews")
 		.orderAsc("users")
 		.removeOrder("users");
+
+	var filter = (new MetricFilter())
+		.metric("pageviews")
+		.lessThan(2500);
+
+	request.metricFilter(filter);
 
 	try {
 		// Make the request and fetch data
