@@ -26,7 +26,7 @@ ObjectBuilder.prototype.append = function(key, value) {
 	return this;
 }
 
-ObjectBuilder.prototype.getValues = function(values, fn=null) {
+ObjectBuilder.prototype.getValues = function(values) {
 
 	if(!values) {
 		return [];
@@ -39,13 +39,7 @@ ObjectBuilder.prototype.getValues = function(values, fn=null) {
 		values = values[0]
 	};
 
-	if(!fn) {
-		return values;
-	}
-
-	return values.map(function(value){
-		return fn(value);
-	});
+	return values;
 }
 
 ObjectBuilder.prototype.appendMultiple = function(key, values) {
