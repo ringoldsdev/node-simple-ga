@@ -91,7 +91,10 @@ Request.prototype.dimension = function(dimension, histogramBuckets) {
 	return this;
 };
 
-Request.prototype.dimensions = function(dimensions) {
+Request.prototype.dimensions = function(...dimensions) {
+	if(dimensions.length === 1 && Array.isArray(dimensions[0])) {
+		dimensions = dimensions[0]
+	}
 	dimensions.forEach(
 		function(obj) {
 			this.dimension(obj);
@@ -116,7 +119,10 @@ Request.prototype.metric = function(metric, type) {
 	return this;
 };
 
-Request.prototype.metrics = function(metrics) {
+Request.prototype.metrics = function(...metrics) {
+	if(metrics.length === 1 && Array.isArray(metrics[0])) {
+		metrics = metrics[0]
+	}
 	metrics.forEach(
 		function(obj) {
 			this.metric(obj);

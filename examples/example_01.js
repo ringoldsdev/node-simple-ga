@@ -9,8 +9,8 @@ const { SimpleGoogleAnalytics, Request } = require("../index.js");
 	var request = (new Request())
 		.view(process.env.GA_VIEW_ID)
 		.results(10)
-		.dimension("pagePath")
-		.metric("pageviews")
+		.dimensions(["pagePath","pageTitle"])
+		.metrics("pageviews","users")
 		.orderDesc("pageviews");
 
 	try {
