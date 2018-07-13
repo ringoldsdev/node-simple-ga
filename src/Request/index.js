@@ -8,8 +8,12 @@ var Request = function() {}
 
 Request.prototype = Object.create(new ObjectBuilder());
 
-const makeDimensionObject = function(name, histogramBuckets = null) {
-	var obj = { name };
+const makeDimensionObject = function(name) {
+	return { name };
+}
+
+const makeHistogramObject = function(name, histogramBuckets = null) {
+	var obj = makeDimensionObject(name);
 	if(histogramBuckets) {
 		obj.histogramBuckets = histogramBuckets;
 	}
@@ -98,7 +102,7 @@ Request.prototype.histogram = function(dimension, histogramBuckets = null) {
 		return bucket.toString();
 	});
 	dimension = ApiHelper.generateApiName(dimension);
-	dimension = makeDimensionObject(dimension, histogramBuckets);
+	dimension = makeHistogramObject(dimension, histogramBuckets);
 	return this.set("dimensions", [dimension]);
 };
 
