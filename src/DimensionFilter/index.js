@@ -89,9 +89,13 @@ DimensionFilter.prototype.lte = function(value) {
 	return this.lessThan(value+1);
 };
 
-DimensionFilter.prototype.inList = function(value) {
+DimensionFilter.prototype.inList = function(...values) {
 	this.set("operator", "IN_LIST");
-	return this.set("expressions", value);
+	values = this.getValues(values);
+	values = values.map(function(value){
+		return value.toString();
+	});
+	return this.set("expressions", values);
 };
 
 DimensionFilter.prototype.caseSensitive = function() {
