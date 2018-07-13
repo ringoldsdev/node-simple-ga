@@ -1,113 +1,43 @@
 // https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet
 // https://developers.google.com/analytics/devguides/reporting/core/dimsmets
-const cloneDeep = require("clone-deep");
 
-var Request = function() {
-	this.request = {};
-};
+var ObjectBuilder = require("../ObjectBuilder");
 
-Request.prototype.reset = function() {
-	this.request = {};
-	return this;
-};
+var Request = function() {}
 
-Request.prototype.set = function(key, value) {
-	if (value == null) {
-		return this.clear(key);
-	}
-
-	this.request[key] = value;
-	return this;
-}
-
-Request.prototype.append = function(key, value) {
-	if(!this.request[key]) {
-		this.request[key] = [];
-	}
-	this.request[key].push(value);
-	return this;
-}
-
-Request.prototype.getValues = function(values, fn=null) {
-
-	if(!values) {
-		return [];
-	}
-	if(values.length === 0) {
-		return [];
-	}
-
-	if(values.length === 1 && Array.isArray(values[0])) {
-		values = values[0]
-	};
-
-	if(!fn) {
-		return values;
-	}
-
-	return values.map(function(value){
-		return fn(value);
-	});
-}
-
-Request.prototype.appendMultiple = function(key, values) {
-	var that = this;
-	values.forEach(
-		function(value) {
-			that.append(key, value);
-		}
-	);
-	return this;
-}
-
-Request.prototype.remove = function(key, param, value) {
-	if (!this.request[key]) {
-		return this;
-	}
-
-	this.request[key] = this.request[key].filter(function(entry) {
-		return entry[param] !== value;
-	});
-
-	if (this.request[key].length == 0) {
-		this.clear(key);
-	}
-
-	return this;
-}
-
-Request.prototype.removeMultiple = function(key, param, values) {
-	values.forEach(function(value){
-		this.remove(value)
-	}.bind(this));
-
-	return this;
-}
-
-Request.prototype.clear = function(key) {
-	if(!key) {
-		return this.reset();
-	}
-
-	delete this.request[key];
-	return this;
-}
-
-Request.prototype.make = function() {
-	return JSON.parse(JSON.stringify(this.request));
-};
-
-Request.prototype.clone = function(type, filter) {
-	return cloneDeep(this);
-};
+Request.prototype = Object.create(new ObjectBuilder());
 
 const generateApiName = function(name) {
 	return `ga:${name}`;
 }
 
-const generateApiNames = function(names) {
-	return names.map(function(name){
-		return generateApiName(name);
+const makeDimensionObject = function(name, histogramBuckets = null) {
+	var obj = { name };
+	if(histogramBuckets) {
+		obj.histogramBuckets = histogramBuckets;
+	}
+	return obj;
+}
+
+const makeMetricObject = function(name, type = "INTEGER") {
+	return {
+		expression:  name,
+		formattingType: type ? type : "INTEGER"
+	}
+}
+
+const makeFiltersObject = function(filters, operator = "OR") {
+	return {
+		operator,
+		filters: filters.map(function(filter) {
+			return filter.make();
+		})
+	}
+}
+
+const makeObjects = function(values, fn) {
+	return values.map(function(value){
+		return fn(value);
 	});
 }
 
@@ -165,14 +95,6 @@ Request.prototype.dateRange = function(params) {
 	return this.set("dateRanges",[dateRange]);
 };
 
-const makeDimensionObject = function(name, histogramBuckets = null) {
-	var obj = { name };
-	if(histogramBuckets) {
-		obj.histogramBuckets = histogramBuckets;
-	}
-	return obj;
-}
-
 Request.prototype.dimension = function(dimension) {
 	return this.append("dimensions", makeDimensionObject(generateApiName(dimension)));
 };
@@ -185,10 +107,9 @@ Request.prototype.histogram = function(dimension, histogramBuckets = null) {
 };
 
 Request.prototype.dimensions = function(...values) {
-	values = this.getValues(values, generateApiName);
-	values = values.map(function(value){
-		return makeDimensionObject(value);
-	});
+	values = this.getValues(values);
+	values = makeObjects(values, generateApiName);
+	values = makeObjects(values, makeDimensionObject);
 	return this.appendMultiple("dimensions",values);
 };
 
@@ -205,22 +126,14 @@ Request.prototype.removeDimensions = function(...values) {
 	return this.removeMultiple("dimensions", "name", values);
 };
 
-const makeMetricObject = function(name, type = "INTEGER") {
-	return {
-		expression:  name,
-		formattingType: type ? type : "INTEGER"
-	}
-}
-
 Request.prototype.metric = function(name, type) {
 	return this.append("metrics", makeMetricObject(generateApiName(name)));
 };
 
 Request.prototype.metrics = function(...values) {
-	values = this.getValues(values, generateApiName);
-	values = values.map(function(value){
-		return makeDimensionObject(value);
-	});
+	values = this.getValues(values);
+	values = makeObjects(values, generateApiName);
+	values = makeObjects(values, makeMetricObject);
 	return this.appendMultiple("metrics", values);
 };
 
@@ -321,15 +234,6 @@ Request.prototype.dimensionFilters = function(filters, operator = "AND") {
 Request.prototype.dimensionFilter = function(filter) {
 	return this.filter("dimensionFilterClauses", filter);
 };
-
-const makeFiltersObject = function(filters, operator = "OR") {
-	return {
-		operator,
-		filters: filters.map(function(filter) {
-			return filter.make();
-		})
-	}
-}
 
 Request.prototype.filters = function(type, filters) {
 	return this.append(type, makeFiltersObject(filters));
