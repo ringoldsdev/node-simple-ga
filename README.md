@@ -1,4 +1,5 @@
 
+
 # SimpleGoogleAnalytics
 A simple to use NodeJs package for the Google Analytics Reporting API.
 This is still very much work in progress so please check back.
@@ -38,11 +39,9 @@ By default, data will be returned as an array of objects in the format below. Fo
 ```
 It's that simple!
 ## What it really is
-SimpleGoogleAnalytics is a package that helps you to create a [Reporting API v4 compliant](https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet) JSON request,  sending it to the Google Analytics API, parsing the response and, if possible and requested by the user, paginating additional requests.
+SimpleGoogleAnalytics helps you create and make [Reporting API v4 compliant](https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet) JSON requests in a function-oriented manner, parse the response, and paginate additional requests if requested by the user. Further improvements will be focused on creating requests in a more robust and efficient way.
 ## What it won't be
-This package is not and will not be a data processing package. Data processing is left up to you - the developer, and no improvements beyond bugfixes of the basic data processing it already has must not be expected.
-
-However, you can expect further improvements to the request creation part of the package and migrating the package to be compliant with the v5 of the Reporting API when the time comes.
+This package is not and will not be a data processing package. Data processing is left up to you - the developer.
 ## Installation
 To use the package, run:
 ```JavaScript
@@ -56,9 +55,8 @@ Typical usage for the script follows the following script:
 3) Create a request object
 4) Add criteria to the request object
 5) Create dimension and metric filters
-6) Append filters to the request
+6) Add filters to the request
 7) Run the request
-8) Process data
 
 Optionally:
 1) Clone the request object
@@ -128,3 +126,8 @@ Please note that if you don't specify a date, only the last 7 days, excluding to
 > [Source](https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#ReportRequest.FIELDS)
 
 ## Reference
+
+## Author
+Ringolds Leščinskis
+Website: [www.lescinskis.com](https://www.lescinskis.com)
+E-mail: ringolds@lescinskis.com
