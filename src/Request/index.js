@@ -11,18 +11,112 @@ Request.prototype.reset = function() {
 	return this;
 };
 
-Request.prototype.view = function(view) {
-	this.request.viewId = `ga:${view}`;
+Request.prototype.set = function(key, value) {
+	if (value == null) {
+		return this.clear(key);
+	}
+
+	this.request[key] = value;
 	return this;
+}
+
+Request.prototype.append = function(key, value) {
+	if(!this.request[key]) {
+		this.request[key] = [];
+	}
+	this.request[key].push(value);
+	return this;
+}
+
+Request.prototype.getValues = function(values, fn=null) {
+
+	if(!values) {
+		return [];
+	}
+	if(values.length === 0) {
+		return [];
+	}
+
+	if(values.length === 1 && Array.isArray(values[0])) {
+		values = values[0]
+	};
+
+	if(!fn) {
+		return values;
+	}
+
+	return values.map(function(value){
+		return fn(value);
+	});
+}
+
+Request.prototype.appendMultiple = function(key, values) {
+	var that = this;
+	values.forEach(
+		function(value) {
+			that.append(key, value);
+		}
+	);
+	return this;
+}
+
+Request.prototype.remove = function(key, param, value) {
+	if (!this.request[key]) {
+		return this;
+	}
+
+	this.request[key] = this.request[key].filter(function(entry) {
+		return entry[param] !== value;
+	});
+
+	if (this.request[key].length == 0) {
+		this.clear(key);
+	}
+
+	return this;
+}
+
+Request.prototype.removeMultiple = function(key, param, values) {
+	values.forEach(function(value){
+		this.remove(value)
+	}.bind(this));
+
+	return this;
+}
+
+Request.prototype.clear = function(key) {
+	if(!key) {
+		return this.reset();
+	}
+
+	delete this.request[key];
+	return this;
+}
+
+Request.prototype.make = function() {
+	return JSON.parse(JSON.stringify(this.request));
+};
+
+Request.prototype.clone = function(type, filter) {
+	return cloneDeep(this);
+};
+
+const generateApiName = function(name) {
+	return `ga:${name}`;
+}
+
+const generateApiNames = function(names) {
+	return names.map(function(name){
+		return generateApiName(name);
+	});
+}
+
+Request.prototype.view = function(view) {
+	return this.set("viewId",generateApiName(view));
 };
 
 Request.prototype.pageSize = function(size) {
-	if (size == null) {
-		delete this.request.pageSize;
-		return this;
-	}
-	this.request.pageSize = size;
-	return this;
+	return this.set("pageSize",size);
 };
 
 Request.prototype.results = function(count) {
@@ -30,12 +124,7 @@ Request.prototype.results = function(count) {
 }
 
 Request.prototype.pageToken = function(token) {
-	if (token == null) {
-		delete this.request.pageToken;
-		return this;
-	}
-	this.request.pageToken = token;
-	return this;
+	return this.set("pageToken",token);
 };
 
 Request.prototype.removePageToken = function(token) {
@@ -50,20 +139,19 @@ Request.prototype.removeOffset = function(value) {
 	return this.pageToken(null);
 };
 
-
-Request.prototype.make = function() {
-	return JSON.parse(JSON.stringify(this.request));
+Request.prototype.sample = function(size) {
+	return this.set("samplingLevel",size.toUpperCase());
 };
 
 Request.prototype.fast = function() {
-	this.request.samplingLevel = "SMALL";
-	return this;
+	return this.sample("SMALL");
 };
 
 Request.prototype.precise = function() {
-	this.request.samplingLevel = "LARGE";
-	return this;
+	return this.sample("LARGE");
 };
+
+// Date functions
 
 Request.prototype.dateRange = function(params) {
 	var dateRange = {};
@@ -73,164 +161,112 @@ Request.prototype.dateRange = function(params) {
 	if (params.to) {
 		dateRange.endDate = params.to;
 	}
-	if (!this.request.dateRanges) {
-		this.request.dateRanges = [];
-	}
-	this.request.dateRanges.push(dateRange);
-	return this;
+	// For now only 1 date range is permitted
+	return this.set("dateRanges",[dateRange]);
 };
 
-Request.prototype.dimension = function(dimension, histogramBuckets) {
-	var obj = { name: `ga:${dimension}` };
-	if (histogramBuckets) {
-		obj.histogramBuckets = histogramBuckets.forEach(function(bucket) {
-			return bucket.toString();
-		});
+const makeDimensionObject = function(name, histogramBuckets = null) {
+	var obj = { name };
+	if(histogramBuckets) {
+		obj.histogramBuckets = histogramBuckets;
 	}
-	if (!this.request.dimensions) {
-		this.request.dimensions = [];
-	}
-	this.request.dimensions.push(obj);
-	return this;
+	return obj;
+}
+
+Request.prototype.dimension = function(dimension) {
+	return this.append("dimensions", makeDimensionObject(generateApiName(dimension)));
 };
 
-Request.prototype.dimensions = function(...dimensions) {
-	if(dimensions.length === 1 && Array.isArray(dimensions[0])) {
-		dimensions = dimensions[0]
-	}
-	dimensions.forEach(
-		function(obj) {
-			this.dimension(obj);
-		}.bind(this)
-	);
-	return this;
+Request.prototype.histogram = function(dimension, histogramBuckets = null) {
+	histogramBuckets = histogramBuckets.forEach(function(bucket) {
+		return bucket.toString();
+	});
+	return this.set("dimensions", [makeDimensionObject(generateApiName(dimension), histogramBuckets)]);
+};
+
+Request.prototype.dimensions = function(...values) {
+	values = this.getValues(values, generateApiName);
+	values = values.map(function(value){
+		return makeDimensionObject(value);
+	});
+	return this.appendMultiple("dimensions",values);
 };
 
 Request.prototype.clearDimensions = function() {
-	delete this.request.dimensions;
-	return this;
-};
-
-Request.prototype.metric = function(metric, type) {
-	if (!this.request.metrics) {
-		this.request.metrics = [];
-	}
-	this.request.metrics.push({
-		expression: `ga:${metric}`,
-		formattingType: type ? type : "INTEGER"
-	});
-	return this;
-};
-
-Request.prototype.metrics = function(...metrics) {
-	if(metrics.length === 1 && Array.isArray(metrics[0])) {
-		metrics = metrics[0]
-	}
-	metrics.forEach(
-		function(obj) {
-			this.metric(obj);
-		}.bind(this)
-	);
-	return this;
+	return this.clear("dimensions");
 };
 
 Request.prototype.removeDimension = function(name) {
-	if (!this.request.dimensions) {
-		return this;
-	}
+	return this.remove("dimensions", "name", generateApiName(name));
+};
 
-	this.request.dimensions = this.request.dimensions.filter(function(dimension) {
-		return dimension.name !== `ga:${name}`;
+Request.prototype.removeDimensions = function(...values) {
+	values = this.getValues(values, generateApiName);
+	return this.removeMultiple("dimensions", "name", values);
+};
+
+const makeMetricObject = function(name, type = "INTEGER") {
+	return {
+		expression:  name,
+		formattingType: type ? type : "INTEGER"
+	}
+}
+
+Request.prototype.metric = function(name, type) {
+	return this.append("metrics", makeMetricObject(generateApiName(name)));
+};
+
+Request.prototype.metrics = function(...values) {
+	values = this.getValues(values, generateApiName);
+	values = values.map(function(value){
+		return makeDimensionObject(value);
 	});
-
-	if (this.request.dimensions.length == 0) {
-		this.clearDimensions();
-	}
-
-	return this;
+	return this.appendMultiple("metrics", values);
 };
 
-Request.prototype.removeDimensions = function(...dimensions) {
-	if(dimensions.length === 1 && Array.isArray(dimensions[0])) {
-		dimensions = dimensions[0]
-	}
-	dimensions.forEach(
-		function(name) {
-			this.removeDimension(name);
-		}.bind(this)
-	);
-	return this;
+Request.prototype.metricInt = function(name) {
+	return this.metric(name, "INTEGER");
 };
 
-Request.prototype.metricInt = function(metric) {
-	return this.metric(metric, "INTEGER");
+Request.prototype.nameFloat = function(name) {
+	return this.metric(name, "FLOAT");
 };
 
-Request.prototype.metricFloat = function(metric) {
-	return this.metric(metric, "FLOAT");
+Request.prototype.nameCurrency = function(name) {
+	return this.metric(name, "CURRENCY");
 };
 
-Request.prototype.metricCurrency = function(metric) {
-	return this.metric(metric, "CURRENCY");
+Request.prototype.namePercent = function(name) {
+	return this.metric(name, "PERCENT");
 };
 
-Request.prototype.metricPercent = function(metric) {
-	return this.metric(metric, "PERCENT");
-};
-
-Request.prototype.metricTime = function(metric) {
-	return this.metric(metric, "TIME");
+Request.prototype.nameTime = function(name) {
+	return this.metric(name, "TIME");
 };
 
 Request.prototype.clearMetrics = function() {
-	delete this.request.metrics;
-	return this;
+	return this.clear("metrics");
 };
 
-Request.prototype.removeMtric = function(name) {
-	if (!this.request.metrics) {
-		return this;
-	}
-	this.request.metrics = this.request.metrics.filter(function(metric) {
-		return metric.expression !== `ga:${name}`;
-	});
-	if (this.request.metrics.length == 0) {
-		this.clearMetrics();
-	}
-	return this;
+Request.prototype.removeMetric = function(name) {
+	return this.remove("metrics", "expression", generateApiName(name));
 };
 
-Request.prototype.removeMetrics = function(metrics) {
-	if(metrics.length === 1 && Array.isArray(metrics[0])) {
-		metrics = metrics[0]
-	}
-	metrics.forEach(
-		function(name) {
-			this.removeMetric(name);
-		}.bind(this)
-	);
-	return this;
+Request.prototype.removeMetrics = function(...values) {
+	values = this.getValues(values, generateApiName);
+	return this.removeMultiple("dimensions", "name", values);
 };
 
 Request.prototype.filtersExpression = function(expression) {
-	if (expression == null) {
-		delete this.request.filtersExpression;
-		return this;
-	}
-	this.request.filtersExpression = expression;
-	return this;
+	return this.set("filtersExpression", expression);
 };
 
 Request.prototype.orderBy = function(params) {
-	if (!this.request.orderBys) {
-		this.request.orderBys = [];
-	}
-	this.request.orderBys.push({
-		fieldName: `ga:${params.name}`,
+	return this.append("orderBys", {
+		fieldName: generateApiName(params.name),
 		orderType: params.type ? params.type : "VALUE",
 		sortOrder: params.order ? params.order : "DESCENDING"
 	});
-	return this;
 };
 
 Request.prototype.orderAsc = function(name) {
@@ -246,19 +282,20 @@ Request.prototype.orderDesc = function(name) {
 	});
 };
 
-Request.prototype.removeOrder = function(name) {
-	this.request.orderBys = this.request.orderBys.filter(function(entry){
-		return entry.fieldName !== `ga:${name}`;
-	});
-
-	return this;
-};
-
 Request.prototype.orderHistogram = function(name) {
 	return this.orderBy({
 		name: name,
 		type: "HISTOGRAM_BUCKET"
 	});
+};
+
+Request.prototype.removeOrder = function(name) {
+	return this.remove("orderBys", "fieldName", generateApiName(name));
+};
+
+Request.prototype.removeOrders = function(...values) {
+	values = this.getValues(values, generateApiName);
+	return this.removeMultiple("orderBys", "fieldName", values);
 };
 
 Request.prototype.metricOrFilters = function(filters) {
@@ -285,28 +322,25 @@ Request.prototype.dimensionFilter = function(filter) {
 	return this.filter("dimensionFilterClauses", filter);
 };
 
-Request.prototype.filters = function(type, filters, operator = "AND") {
-	if (!this.request[type]) {
-		this.request[type] = [];
-	}
-
-	this.request[type].push({
+const makeFiltersObject = function(filters, operator = "OR") {
+	return {
 		operator,
 		filters: filters.map(function(filter) {
 			return filter.make();
 		})
-	});
+	}
+}
 
-	return this;
+Request.prototype.filters = function(type, filters) {
+	return this.append(type, makeFiltersObject(filters));
+};
+
+Request.prototype.andFilters = function(type, filters) {
+	return this.append(type, makeFiltersObject(filters, "AND"));
 };
 
 Request.prototype.filter = function(type, filter) {
-	this.filters(type, [filter]);
-	return this;
-};
-
-Request.prototype.clone = function(type, filter) {
-	return cloneDeep(this);
+	return this.filters(type, [filter]);
 };
 
 module.exports = Request;
