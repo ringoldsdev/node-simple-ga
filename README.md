@@ -1,10 +1,10 @@
 
-# SimpleGA
+# SimpleGoogleAnalytics
 A simple to use NodeJs package for the Google Analytics Reporting API.
 This is still very much work in progress so please check back.
 
 ## Down to business
-It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data and let SimpleGA handle the rest.
+It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data and let SimpleGoogleAnalytics handle the rest.
 
 Getting the top 10 links is as easy as this:
 
@@ -38,7 +38,7 @@ By default, data will be returned as an array of objects in the format below. Fo
 ```
 It's that simple!
 ## What it really is
-SimpleGA is a package that helps you to create a [Reporting API v4 compliant](https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet) JSON request,  sending it to the Google Analytics API, parsing the response and, if possible and requested by the user, paginating additional requests.
+SimpleGoogleAnalytics is a package that helps you to create a [Reporting API v4 compliant](https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet) JSON request,  sending it to the Google Analytics API, parsing the response and, if possible and requested by the user, paginating additional requests.
 ## What it won't be
 This package is not and will not be a data processing package. Data processing is left up to you - the developer, and no improvements beyond bugfixes of the basic data processing it already has must not be expected.
 
