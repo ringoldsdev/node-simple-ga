@@ -2,14 +2,11 @@
 // https://developers.google.com/analytics/devguides/reporting/core/dimsmets
 
 var ObjectBuilder = require("../ObjectBuilder");
+var ApiHelper = require("../ApiHelper");
 
 var Request = function() {}
 
 Request.prototype = Object.create(new ObjectBuilder());
-
-const generateApiName = function(name) {
-	return `ga:${name}`;
-}
 
 const makeDimensionObject = function(name, histogramBuckets = null) {
 	var obj = { name };
@@ -42,7 +39,7 @@ const makeObjects = function(values, fn) {
 }
 
 Request.prototype.view = function(view) {
-	return this.set("viewId",generateApiName(view));
+	return this.set("viewId",ApiHelper.generateApiName(view));
 };
 
 Request.prototype.pageSize = function(size) {
@@ -96,19 +93,21 @@ Request.prototype.dateRange = function(params) {
 };
 
 Request.prototype.dimension = function(dimension) {
-	return this.append("dimensions", makeDimensionObject(generateApiName(dimension)));
+	dimension = ApiHelper.generateApiName(dimension);
+	return this.append("dimensions", makeDimensionObject(dimension));
 };
 
 Request.prototype.histogram = function(dimension, histogramBuckets = null) {
 	histogramBuckets = histogramBuckets.forEach(function(bucket) {
 		return bucket.toString();
 	});
-	return this.set("dimensions", [makeDimensionObject(generateApiName(dimension), histogramBuckets)]);
+	dimension = ApiHelper.generateApiName(dimension);
+	return this.set("dimensions", [makeDimensionObject(dimension, histogramBuckets)]);
 };
 
 Request.prototype.dimensions = function(...values) {
 	values = this.getValues(values);
-	values = makeObjects(values, generateApiName);
+	values = makeObjects(values, ApiHelper.generateApiName);
 	values = makeObjects(values, makeDimensionObject);
 	return this.appendMultiple("dimensions",values);
 };
@@ -118,21 +117,21 @@ Request.prototype.clearDimensions = function() {
 };
 
 Request.prototype.removeDimension = function(name) {
-	return this.remove("dimensions", "name", generateApiName(name));
+	return this.remove("dimensions", "name", ApiHelper.generateApiName(name));
 };
 
 Request.prototype.removeDimensions = function(...values) {
-	values = this.getValues(values, generateApiName);
+	values = this.getValues(values, ApiHelper.generateApiName);
 	return this.removeMultiple("dimensions", "name", values);
 };
 
 Request.prototype.metric = function(name, type) {
-	return this.append("metrics", makeMetricObject(generateApiName(name)));
+	return this.append("metrics", makeMetricObject(ApiHelper.generateApiName(name)));
 };
 
 Request.prototype.metrics = function(...values) {
 	values = this.getValues(values);
-	values = makeObjects(values, generateApiName);
+	values = makeObjects(values, ApiHelper.generateApiName);
 	values = makeObjects(values, makeMetricObject);
 	return this.appendMultiple("metrics", values);
 };
@@ -162,11 +161,11 @@ Request.prototype.clearMetrics = function() {
 };
 
 Request.prototype.removeMetric = function(name) {
-	return this.remove("metrics", "expression", generateApiName(name));
+	return this.remove("metrics", "expression", ApiHelper.generateApiName(name));
 };
 
 Request.prototype.removeMetrics = function(...values) {
-	values = this.getValues(values, generateApiName);
+	values = this.getValues(values, ApiHelper.generateApiName);
 	return this.removeMultiple("dimensions", "name", values);
 };
 
@@ -176,7 +175,7 @@ Request.prototype.filtersExpression = function(expression) {
 
 Request.prototype.orderBy = function(params) {
 	return this.append("orderBys", {
-		fieldName: generateApiName(params.name),
+		fieldName: ApiHelper.generateApiName(params.name),
 		orderType: params.type ? params.type : "VALUE",
 		sortOrder: params.order ? params.order : "DESCENDING"
 	});
@@ -203,11 +202,11 @@ Request.prototype.orderHistogram = function(name) {
 };
 
 Request.prototype.removeOrder = function(name) {
-	return this.remove("orderBys", "fieldName", generateApiName(name));
+	return this.remove("orderBys", "fieldName", ApiHelper.generateApiName(name));
 };
 
 Request.prototype.removeOrders = function(...values) {
-	values = this.getValues(values, generateApiName);
+	values = this.getValues(values, ApiHelper.generateApiName);
 	return this.removeMultiple("orderBys", "fieldName", values);
 };
 
