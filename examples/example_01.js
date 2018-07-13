@@ -23,7 +23,9 @@ const { SimpleGoogleAnalytics, Request, MetricFilter } = require("../index.js");
 		.lessThan(2500);
 
 	request.metricFilter(filter);
-	
+
+	request.clearMetricFilters();
+
 	try {
 		// Make the request and fetch data
 		// console.log(request.make());

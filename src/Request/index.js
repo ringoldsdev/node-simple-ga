@@ -218,6 +218,20 @@ Request.prototype.removeOrders = function(...values) {
 	return this.removeMultiple("orderBys", "fieldName", values);
 };
 
+Request.prototype.filters = function(type, filters) {
+	filters = makeFiltersObject(filters);
+	return this.append(type, filters);
+};
+
+Request.prototype.andFilters = function(type, filters) {
+	filters = makeFiltersObject(filters, "AND");
+	return this.append(type, filters);
+};
+
+Request.prototype.filter = function(type, filter) {
+	return this.filters(type, [filter]);
+};
+
 Request.prototype.metricOrFilters = function(filters) {
 	return this.filters("metricFilterClauses", filters, "OR");
 };
@@ -242,18 +256,17 @@ Request.prototype.dimensionFilter = function(filter) {
 	return this.filter("dimensionFilterClauses", filter);
 };
 
-Request.prototype.filters = function(type, filters) {
-	filters = makeFiltersObject(filters);
-	return this.append(type, filters);
-};
+Request.prototype.clearDimensionFilters = function() {
+	return this.clear("dimensionFilterClauses");
+}
 
-Request.prototype.andFilters = function(type, filters) {
-	filters = makeFiltersObject(filters, "AND");
-	return this.append(type, filters);
-};
+Request.prototype.clearMetricFilters = function() {
+	return this.clear("metricFilterClauses");
+}
 
-Request.prototype.filter = function(type, filter) {
-	return this.filters(type, [filter]);
-};
+Request.prototype.clearFilters = function() {
+	this.clearDimensionFilters();
+	return this.cleaMetricFilters();
+}
 
 module.exports = Request;
