@@ -1,16 +1,22 @@
-var MetricFilter = function() {
-	this.filter = {};
-};
+var ObjectBuilder = require("../ObjectBuilder");
+var ApiHelper = require("../ApiHelper");
+
+var MetricFilter = function() {}
+
+MetricFilter.prototype = Object.create(new ObjectBuilder());
 
 MetricFilter.prototype.metric = function(name) {
-	this.filter.metricName = `ga:${name}`;
-	return this;
+	name = ApiHelper.generateApiName(name);
+	return this.set("metricName", name);
 };
 
+MetricFilter.prototype.condition = function(value, operator = "EQUAL") {
+	this.set("operator", operator);
+	return this.set("comparisonValue", value.toString());
+}
+
 MetricFilter.prototype.greaterThan = function(value) {
-	this.filter.operator = "GREATER_THAN";
-	this.filter.comparisonValue = value.toString();
-	return this;
+	return this.condition(value,"GREATER_THAN");
 };
 
 MetricFilter.prototype.gt = function(value) {
@@ -26,9 +32,7 @@ MetricFilter.prototype.gte = function(value) {
 };
 
 MetricFilter.prototype.lessThan = function(value) {
-	this.filter.operator = "LESS_THAN";
-	this.filter.comparisonValue = value.toString();
-	return this;
+	return this.condition(value,"LESS_THAN");
 };
 
 MetricFilter.prototype.lt = function(value) {
@@ -45,8 +49,7 @@ MetricFilter.prototype.lte = function(value) {
 };
 
 MetricFilter.prototype.equalTo = function(value) {
-	this.filter.comparisonValue = value.toString();
-	return this;
+	return this.condition(value);
 };
 
 MetricFilter.prototype.equals = function(value) {
@@ -54,17 +57,11 @@ MetricFilter.prototype.equals = function(value) {
 };
 
 MetricFilter.prototype.not = function() {
-	this.filter.not = true;
-	return this;
+	return this.set("not", true);
 };
 
 MetricFilter.prototype.inverse = function() {
 	return this.not();
-};
-
-
-MetricFilter.prototype.make = function() {
-	return JSON.parse(JSON.stringify(this.filter));
 };
 
 module.exports = MetricFilter;

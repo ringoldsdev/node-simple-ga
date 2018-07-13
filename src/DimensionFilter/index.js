@@ -1,64 +1,56 @@
 // https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet
-// https://developers.google.com/analytics/devguides/reporting/core/dimsmets
 
-var DimensionFilter = function() {
-	this.filter = {};
-};
+var ObjectBuilder = require("../ObjectBuilder");
+var ApiHelper = require("../ApiHelper");
+
+var DimensionFilter = function() {}
+
+DimensionFilter.prototype = Object.create(new ObjectBuilder());
+
+DimensionFilter.prototype.condition = function(expression, operator = "EXACT") {
+	this.set("operator", operator);
+	return this.set("expressions", [expression.toString()]);
+}
 
 DimensionFilter.prototype.dimension = function(name) {
-	this.filter.dimensionName = `ga:${name}`;
-	return this;
+	name = ApiHelper.generateApiName(name);
+	return this.set("dimensionName", name);
 };
 
 DimensionFilter.prototype.not = function() {
-	this.filter.not = true;
-	return this;
+	return this.set("not", true);
 };
 
 DimensionFilter.prototype.inverse = function() {
 	return this.not();
 };
 
-DimensionFilter.prototype.matchRegex = function(regex) {
-	this.filter.operator = "REGEXP";
-	this.filter.expressions = [regex.toString()];
-	return this;
+DimensionFilter.prototype.matchRegex = function(value) {
+	return this.condition(value, "REGEXP");
 };
 
 DimensionFilter.prototype.beginsWith = function(value) {
-	this.filter.operator = "BEGINS_WITH";
-	this.filter.expressions = [value.toString()];
-	return this;
+	return this.condition(value, "BEGINS_WITH");
 };
 
 DimensionFilter.prototype.endsWith = function(value) {
-	this.filter.operator = "ENDS_WITH";
-	this.filter.expressions = [value.toString()];
-	return this;
+	return this.condition(value, "ENDS_WITH");
 };
 
 DimensionFilter.prototype.contains = function(value) {
-	this.filter.operator = "PARTIAL";
-	this.filter.expressions = [value.toString()];
-	return this;
+	return this.condition(value, "PARTIAL");
 };
 
 DimensionFilter.prototype.is = function(value) {
-	this.filter.operator = "EXACT";
-	this.filter.expressions = [value.toString()];
-	return this;
+	return this.condition(value);
 };
 
 DimensionFilter.prototype.matches = function(value) {
-	this.filter.operator = "EXACT";
-	this.filter.expressions = [value.toString()];
-	return this;
+	return this.is(value);
 };
 
 DimensionFilter.prototype.equalsTo = function(value) {
-	this.filter.operator = "NUMERIC_EQUAL";
-	this.filter.expressions = [value.toString()];
-	return this;
+	return this.condition(value, "NUMERIC_EQUAL");
 };
 
 DimensionFilter.prototype.eq = function(value) {
@@ -66,9 +58,7 @@ DimensionFilter.prototype.eq = function(value) {
 };
 
 DimensionFilter.prototype.greaterThan = function(value) {
-	this.filter.operator = "NUMERIC_GREATER_THAN";
-	this.filter.expressions = [value.toString()];
-	return this;
+	return this.condition(value, "NUMERIC_GREATER_THAN");
 };
 
 DimensionFilter.prototype.gt = function(value) {
@@ -84,9 +74,7 @@ DimensionFilter.prototype.gte = function(value) {
 };
 
 DimensionFilter.prototype.lessThan = function(value) {
-	this.filter.operator = "NUMERIC_LESS_THAN";
-	this.filter.expressions = [value.toString()];
-	return this;
+	return this.condition(value, "NUMERIC_LESS_THAN");
 };
 
 DimensionFilter.prototype.lt = function(value) {
@@ -102,18 +90,12 @@ DimensionFilter.prototype.lte = function(value) {
 };
 
 DimensionFilter.prototype.inList = function(value) {
-	this.filter.operator = "IN_LIST";
-	this.filter.expressions = value;
-	return this;
+	this.set("operator", "IN_LIST");
+	return this.set("expressions", value);
 };
 
 DimensionFilter.prototype.caseSensitive = function() {
-	this.filter.caseSensitive = true;
-	return this;
-};
-
-DimensionFilter.prototype.make = function() {
-	return JSON.parse(JSON.stringify(this.filter));
+	return this.set("caseSensitive", true);
 };
 
 module.exports = DimensionFilter;
