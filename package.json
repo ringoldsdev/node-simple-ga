@@ -1,6 +1,6 @@
 {
   "name": "simple-google-analytics",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "A simple to use NodeJs package for the Google Analytics Reporting API",
   "keywords": [
     "nodejs",
