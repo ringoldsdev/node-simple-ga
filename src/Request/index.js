@@ -243,6 +243,14 @@ Request.prototype.orderDesc = function(name) {
 	});
 };
 
+Request.prototype.removeOrder = function(name) {
+	this.request.orderBys = this.request.orderBys.filter(function(entry){
+		return entry.fieldName !== `ga:${name}`;
+	});
+
+	return this;
+};
+
 Request.prototype.orderHistogram = function(name) {
 	return this.orderBy({
 		name: name,

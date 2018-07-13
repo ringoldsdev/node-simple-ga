@@ -11,8 +11,10 @@ const { SimpleGoogleAnalytics, Request } = require("../index.js");
 		.results(10)
 		.dimensions(["pagePath","pageTitle"])
 		.metrics("pageviews","users")
-		.orderDesc("pageviews");
-
+		.orderDesc("pageviews")
+		.orderAsc("users")
+		.removeOrder("users");
+		
 	try {
 		// Make the request and fetch data
 		var data = await analytics.run(request);
