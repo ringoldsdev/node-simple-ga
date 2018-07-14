@@ -16,7 +16,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha",
+    "test": "node node_modules/nyc/bin/nyc node_modules/mocha/bin/mocha",
     "prettier": "prettier --no-config --print-width 120 --parser flow --use-tabs --write *.js **/*.js"
   },
   "homepage": "https://github.com/lescinskiscom/simple-google-analytics#readme",
@@ -38,6 +38,7 @@
     "chai": "^4.1.2",
     "dotenv": "^6.0.0",
     "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
     "prettier": "^1.13.7"
   }
 }
