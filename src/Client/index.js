@@ -8,25 +8,18 @@ module.exports = {
 	createFromKey: function(key) {
 		var params = {
 			email: key.client_email,
-			privateKey: key.private_key
+			privateKey: key.private_key,
+			permissions: ["https://www.googleapis.com/auth/analytics.readonly"]
 		};
 		return this.createFromParams(params);
 	},
 	createFromParams: function(params) {
-		var jwtClient = new google.auth.JWT(
-			params.email, // For authenticating and permissions
+		return new google.auth.JWT(
+			params.email,
 			null,
 			params.privateKey,
-			params.permissions ? params.permissions : ["https://www.googleapis.com/auth/analytics.readonly"],
+			params.permissions,
 			null
 		);
-		jwtClient.authorize(function(err, tokens) {
-			if (err) {
-				console.log(err);
-				process.exit(1);
-			}
-		});
-
-		return jwtClient;
 	}
 };

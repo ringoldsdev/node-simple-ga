@@ -21,10 +21,15 @@ const SimpleGoogleAnalytics = function(param) {
 		}
 	}
 
-
 	if (!this.client) {
 		throw Error("Google Analytics client wasn't created!");
 	}
+
+	this.client.authorize(function(err, tokens) {
+		if (err) {
+			throw new Error(err);
+		}
+	});
 
 	this.analytics = google.analyticsreporting("v4");
 };
