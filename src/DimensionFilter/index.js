@@ -70,7 +70,7 @@ DimensionFilter.prototype.greaterThanEqualTo = function(value) {
 };
 
 DimensionFilter.prototype.gte = function(value) {
-	return this.greaterThan(value-1);
+	return this.greaterThanEqualTo(value);
 };
 
 DimensionFilter.prototype.lessThan = function(value) {
