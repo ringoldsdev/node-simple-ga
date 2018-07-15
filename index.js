@@ -1,3 +1,5 @@
+// https://developers.google.com/adsense/management/reporting/relative_dates
+
 const Client = require("./src/Client");
 const Request = require("./src/Request");
 const DimensionFilter = require("./src/DimensionFilter");

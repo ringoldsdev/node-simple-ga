@@ -13,6 +13,10 @@ const { SimpleGoogleAnalytics, Request, MetricFilter } = require("../index.js");
 		.metrics("pageviews", "users")
 		.removeMetric("users")
 		.removeDimension("pageTitle")
+		.dateRange({
+			from: "startOfMonth-1m",
+			to: "startOfMonth-1d"
+		})
 		// .metric("users")
 		.orderDesc("pageviews")
 		.orderAsc("users")
