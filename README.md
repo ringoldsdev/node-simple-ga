@@ -7,7 +7,7 @@ This is still very much work in progress so please check back.
 ## Down to business
 It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data let it handle the rest.
 
-Getting the top 10 links is as easy as this:
+Getting the top 10 links is as simple as this:
 
 ```**JavaScriptnode-simple-gaconst** analytics = new SimpleGoogleAnalytics("./key.json");
 

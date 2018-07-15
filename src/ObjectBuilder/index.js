@@ -14,7 +14,18 @@ ObjectBuilder.prototype.set = function(key, value) {
 		return this.clear(key);
 	}
 
-	this.data[key] = value;
+	var obj = {};
+	var selectedObj = obj;
+
+	key.split(".").forEach(function(fragment, i, array){
+		selectedObj[fragment] = {};
+		if(i === array.length-1) {
+			selectedObj[fragment] = value;
+		}
+		selectedObj = selectedObj[fragment];
+	});
+
+	this.data = {...this.data, ...obj};
 	return this;
 }
 
