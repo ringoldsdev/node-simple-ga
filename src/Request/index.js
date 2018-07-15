@@ -110,7 +110,7 @@ Request.prototype.dimensions = function(...values) {
 	values = this.getValues(values);
 	values = values.map(ApiHelper.generateApiName);
 	values = values.map(makeDimensionObject);
-	return this.appendMultiple("dimensions",values);
+	return this.append("dimensions",values);
 };
 
 Request.prototype.clearDimensions = function() {
@@ -125,7 +125,7 @@ Request.prototype.removeDimension = function(name) {
 Request.prototype.removeDimensions = function(...values) {
 	values = this.getValues(values);
 	values = values.map(ApiHelper.generateApiName);
-	return this.removeMultiple("dimensions", "name", values);
+	return this.remove("dimensions", "name", values);
 };
 
 Request.prototype.metric = function(name, type) {
@@ -137,7 +137,7 @@ Request.prototype.metrics = function(...values) {
 	values = this.getValues(values);
 	values = values.map(ApiHelper.generateApiName);
 	values = values.map(makeMetricObject);
-	return this.appendMultiple("metrics", values);
+	return this.append("metrics", values);
 };
 
 Request.prototype.metricInt = function(name) {
@@ -172,7 +172,7 @@ Request.prototype.removeMetric = function(name) {
 Request.prototype.removeMetrics = function(...values) {
 	values = this.getValues(values);
 	values = values.map(ApiHelper.generateApiName);
-	return this.removeMultiple("dimensions", "name", values);
+	return this.remove("dimensions", "name", values);
 };
 
 Request.prototype.filtersExpression = function(expression) {
@@ -215,7 +215,7 @@ Request.prototype.removeOrder = function(name) {
 Request.prototype.removeOrders = function(...values) {
 	values = this.getValues(values);
 	values = values.map(ApiHelper.generateApiName);
-	return this.removeMultiple("orderBys", "fieldName", values);
+	return this.remove("orderBys", "fieldName", values);
 };
 
 Request.prototype.filters = function(type, filters) {
@@ -266,6 +266,10 @@ Request.prototype.clearMetricFilters = function() {
 
 Request.prototype.clearFilters = function() {
 	this.clearDimensionFilters();
+	return this.clearMetricFilters();
+}
+
+Request.prototype.lastMonth = function() {
 	return this.cleaMetricFilters();
 }
 

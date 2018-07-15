@@ -18,11 +18,20 @@ ObjectBuilder.prototype.set = function(key, value) {
 	return this;
 }
 
-ObjectBuilder.prototype.append = function(key, value) {
+ObjectBuilder.prototype.get = function(key) {
+	return this.data[key] ? this.data[key] : null;
+}
+
+ObjectBuilder.prototype.append = function(key, ...values) {
 	if(!this.data[key]) {
 		this.data[key] = [];
 	}
-	this.data[key].push(value);
+	values = this.getValues(values);
+
+	values.forEach(function(value){
+		this.data[key].push(value);
+	}.bind(this));
+
 	return this;
 }
 
@@ -42,37 +51,21 @@ ObjectBuilder.prototype.getValues = function(values) {
 	return values;
 }
 
-ObjectBuilder.prototype.appendMultiple = function(key, values) {
-	var that = this;
-	values.forEach(
-		function(value) {
-			that.append(key, value);
-		}
-	);
-	return this;
-}
-
-ObjectBuilder.prototype.remove = function(key, param, value) {
+ObjectBuilder.prototype.remove = function(key, param, ...values) {
 
 	if (!this.data[key]) {
 		return this;
 	}
 
-	this.data[key] = this.data[key].filter(function(entry) {
-		return entry[param] !== value;
-	});
+	this.getValues(values).forEach(function(value){
+		this.data[key] = this.data[key].filter(function(entry) {
+			return entry[param] !== value;
+		});
+	}.bind(this));
 
 	if (this.data.length == 0) {
 		this.clear(key);
 	}
-
-	return this;
-}
-
-ObjectBuilder.prototype.removeMultiple = function(key, param, values) {
-	values.forEach(function(value){
-		this.remove(value)
-	}.bind(this));
 
 	return this;
 }
