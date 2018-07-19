@@ -128,9 +128,25 @@ Request.prototype.removeDimensions = function(...values) {
 	return this.remove("dimensions", "name", values);
 };
 
-Request.prototype.metric = function(name, type) {
+Request.prototype.metric = function(name) {
 	name = ApiHelper.generateApiName(name);
 	return this.append("metrics", makeMetricObject(name));
+};
+
+Request.prototype.metricDesc = function(name) {
+	return this.metric(name).orderDesc(name);
+};
+
+Request.prototype.metricAsc = function(name) {
+	return this.metric(name).orderAsc(name);
+};
+
+Request.prototype.dimensionDesc = function(name) {
+	return this.dimension(name).orderDesc(name);
+};
+
+Request.prototype.dimensionAsc = function(name) {
+	return this.dimension(name).orderAsc(name);
 };
 
 Request.prototype.metrics = function(...values) {

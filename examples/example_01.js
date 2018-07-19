@@ -1,22 +1,16 @@
 require("dotenv").load();
 
 const path = require("path");
-const { SimpleGoogleAnalytics, Request, MetricFilter } = require("../index.js");
+const { SimpleGA, Request, MetricFilter } = require("../index.js");
 
 (async function() {
-	var analytics = new SimpleGoogleAnalytics(path.join(__dirname, "../key.json"));
+	var analytics = new SimpleGA(path.join(__dirname, "../key.json"));
 
 	var request = new Request()
 		.view(process.env.GA_VIEW_ID)
 		.results(10)
 		.dimensions("pagePath", "pageTitle")
-		.metrics("pageviews", "users")
-		.removeMetric("users")
-		.removeDimension("pageTitle")
-		// .metric("users")
-		.orderDesc("pageviews")
-		.orderAsc("users")
-		.removeOrder("users");
+		.metricDesc("pageviews")
 
 	var filter = new MetricFilter().metric("pageviews").lessThan(2500);
 
