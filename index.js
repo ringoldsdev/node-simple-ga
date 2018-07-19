@@ -1,3 +1,5 @@
+// https://developers.google.com/adsense/management/reporting/relative_dates
+
 const Client = require("./src/Client");
 const Request = require("./src/Request");
 const DimensionFilter = require("./src/DimensionFilter");
@@ -7,10 +9,10 @@ const ResultParser = require("./src/ResultParser");
 const { google } = require("googleapis");
 const cloneDeep = require("clone-deep");
 
-const SimpleGoogleAnalytics = function(param) {
+const SimpleGA = function(param) {
 	this.client = null;
 
-	if(typeof param === "string") {
+	if (typeof param === "string") {
 		this.client = Client.createFromKeyFile(param);
 	} else {
 		if (param.key) {
@@ -21,15 +23,20 @@ const SimpleGoogleAnalytics = function(param) {
 		}
 	}
 
-
 	if (!this.client) {
 		throw Error("Google Analytics client wasn't created!");
 	}
 
+	this.client.authorize(function(err, tokens) {
+		if (err) {
+			throw new Error(err);
+		}
+	});
+
 	this.analytics = google.analyticsreporting("v4");
 };
 
-SimpleGoogleAnalytics.prototype.runRaw = function(request, params = {}, currentPage = 1) {
+SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 	var that = this;
 	return new Promise(function(resolve, reject) {
 		var entries = [];
@@ -96,7 +103,7 @@ SimpleGoogleAnalytics.prototype.runRaw = function(request, params = {}, currentP
 	});
 };
 
-SimpleGoogleAnalytics.prototype.run = async function(request, params = {}) {
+SimpleGA.prototype.run = async function(request, params = {}) {
 	var result = await this.runRaw(request, params);
 
 	if (params.rawResults) {
@@ -116,7 +123,7 @@ SimpleGoogleAnalytics.prototype.run = async function(request, params = {}) {
 };
 
 module.exports = {
-	SimpleGoogleAnalytics,
+	SimpleGA,
 	Request,
 	DimensionFilter,
 	MetricFilter

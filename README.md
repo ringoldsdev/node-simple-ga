@@ -1,16 +1,15 @@
 
 
-# SimpleGoogleAnalytics
+# Simple Google Analytics client for NodeJs
 A simple to use NodeJs package for the Google Analytics Reporting API.
 This is still very much work in progress so please check back.
 
 ## Down to business
-It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data and let SimpleGoogleAnalytics handle the rest.
+It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data let it handle the rest.
 
-Getting the top 10 links is as easy as this:
+Getting the top 10 links is as simple as this:
 
-```JavaScript
-const analytics = new SimpleGoogleAnalytics("./key.json");
+```**JavaScriptnode-simple-gaconst** analytics = new SimpleGA("./key.json");
 
 var request = (new Request())
 	.view(12345678)
@@ -39,13 +38,13 @@ By default, data will be returned as an array of objects in the format below. Fo
 ```
 It's that simple!
 ## What it really is
-SimpleGoogleAnalytics helps you create and make [Reporting API v4 compliant](https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet) JSON requests in a function-oriented manner, parse the response, and paginate additional requests if requested by the user. Further improvements will be focused on creating requests in a more robust and efficient way.
+**node-simple-ga** helps you create and make [Reporting API v4 compliant](https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet) JSON requests in a function-oriented manner, parse the response, and paginate additional requests if requested by the user. Further improvements will be focused on creating requests in a more robust and efficient way.
 ## What it won't be
 This package is not and will not be a data processing package. Data processing is left up to you - the developer.
 ## Installation
 To use the package, run:
 ```JavaScript
-npm i simple-google-analytics
+npm i node-simple-ga
 ```
 Before using the package, you must create and set up a [Service Account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount). You can also watch a video tutorial on [how to set up a Service account](https://www.youtube.com/watch?v=r6cWB0xnOwE). While the title says it's a PHP tutorial, it doesn't really matter because you won't be using PHP anyway. Focus on the account creation and granting read access to the service account.
 ## Usage
@@ -73,14 +72,14 @@ Optionally:
 
 ```JavaScript
 const {
-	SimpleGoogleAnalytics,
+	SimpleGA,
 	Request,
 	MetricFilter,
 	DimensionFilter
 } = require("simple-google-analytics");
 
 (async function() {
-	var analytics = new SimpleGoogleAnalytics("./key.json");
+	var analytics = new SimpleGA("./key.json");
 
 	var request1 = (new Request())
 		.view(XXXXXXXX)
@@ -98,7 +97,7 @@ const {
 		.dimension("country")
 		.matches("US");
 
-	request.dimensionFilters([pagePathFilter,countryFilter]);
+	request.dimensionFilters(pagePathFilter,countryFilter);
 
 	var pageviewsFilter = (new MetricFilter())
 		.metric("pageviews")
@@ -129,5 +128,7 @@ Please note that if you don't specify a date, only the last 7 days, excluding to
 
 ## Author
 Ringolds Leščinskis
+
 Website: [www.lescinskis.com](https://www.lescinskis.com)
+
 E-mail: ringolds@lescinskis.com
