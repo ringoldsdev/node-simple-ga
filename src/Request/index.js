@@ -4,28 +4,28 @@
 var ObjectBuilder = require("../ObjectBuilder");
 var ApiHelper = require("../ApiHelper");
 
-var Request = function() {}
+var Request = function() {};
 
 Request.prototype = Object.create(new ObjectBuilder());
 
 const makeDimensionObject = function(name) {
 	return { name };
-}
+};
 
 const makeHistogramObject = function(name, histogramBuckets = null) {
 	var obj = makeDimensionObject(name);
-	if(histogramBuckets) {
+	if (histogramBuckets) {
 		obj.histogramBuckets = histogramBuckets;
 	}
 	return obj;
-}
+};
 
 const makeMetricObject = function(name, type = "INTEGER") {
 	return {
-		expression:  name,
+		expression: name,
 		formattingType: type ? type : "INTEGER"
-	}
-}
+	};
+};
 
 const makeFiltersObject = function(filters, operator = "OR") {
 	return {
@@ -33,8 +33,8 @@ const makeFiltersObject = function(filters, operator = "OR") {
 		filters: filters.map(function(filter) {
 			return filter.make();
 		})
-	}
-}
+	};
+};
 
 Request.prototype.view = function(viewId) {
 	viewId = ApiHelper.generateApiName(viewId);
@@ -42,15 +42,15 @@ Request.prototype.view = function(viewId) {
 };
 
 Request.prototype.pageSize = function(size) {
-	return this.set("pageSize",size);
+	return this.set("pageSize", size);
 };
 
 Request.prototype.results = function(count) {
 	return this.pageSize(count);
-}
+};
 
 Request.prototype.pageToken = function(token) {
-	return this.set("pageToken",token);
+	return this.set("pageToken", token);
 };
 
 Request.prototype.removePageToken = function(token) {
@@ -66,7 +66,7 @@ Request.prototype.removeOffset = function(value) {
 };
 
 Request.prototype.sample = function(size) {
-	return this.set("samplingLevel",size.toUpperCase());
+	return this.set("samplingLevel", size.toUpperCase());
 };
 
 Request.prototype.fast = function() {
@@ -88,7 +88,7 @@ Request.prototype.dateRange = function(params) {
 		dateRange.endDate = params.to;
 	}
 	// For now only 1 date range is permitted
-	return this.set("dateRanges",[dateRange]);
+	return this.set("dateRanges", [dateRange]);
 };
 
 Request.prototype.dimension = function(dimension) {
@@ -110,7 +110,7 @@ Request.prototype.dimensions = function(...values) {
 	values = this.getValues(values);
 	values = values.map(ApiHelper.generateApiName);
 	values = values.map(makeDimensionObject);
-	return this.append("dimensions",values);
+	return this.append("dimensions", values);
 };
 
 Request.prototype.clearDimensions = function() {
@@ -258,19 +258,19 @@ Request.prototype.dimensionFilter = function(filter) {
 
 Request.prototype.clearDimensionFilters = function() {
 	return this.clear("dimensionFilterClauses");
-}
+};
 
 Request.prototype.clearMetricFilters = function() {
 	return this.clear("metricFilterClauses");
-}
+};
 
 Request.prototype.clearFilters = function() {
 	this.clearDimensionFilters();
 	return this.clearMetricFilters();
-}
+};
 
 Request.prototype.lastMonth = function() {
 	return this.cleaMetricFilters();
-}
+};
 
 module.exports = Request;

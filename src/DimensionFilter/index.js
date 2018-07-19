@@ -3,14 +3,14 @@
 var ObjectBuilder = require("../ObjectBuilder");
 var ApiHelper = require("../ApiHelper");
 
-var DimensionFilter = function() {}
+var DimensionFilter = function() {};
 
 DimensionFilter.prototype = Object.create(new ObjectBuilder());
 
 DimensionFilter.prototype.condition = function(expression, operator = "EXACT") {
 	this.set("operator", operator);
 	return this.set("expressions", [expression.toString()]);
-}
+};
 
 DimensionFilter.prototype.dimension = function(name) {
 	name = ApiHelper.generateApiName(name);
@@ -66,7 +66,7 @@ DimensionFilter.prototype.gt = function(value) {
 };
 
 DimensionFilter.prototype.greaterThanEqualTo = function(value) {
-	return this.greaterThan(value-1);
+	return this.greaterThan(value - 1);
 };
 
 DimensionFilter.prototype.gte = function(value) {
@@ -82,17 +82,17 @@ DimensionFilter.prototype.lt = function(value) {
 };
 
 DimensionFilter.prototype.lessThanEqualTo = function(value) {
-	return this.lessThan(value+1);
+	return this.lessThan(value + 1);
 };
 
 DimensionFilter.prototype.lte = function(value) {
-	return this.lessThan(value+1);
+	return this.lessThan(value + 1);
 };
 
 DimensionFilter.prototype.inList = function(...values) {
 	this.set("operator", "IN_LIST");
 	values = this.getValues(values);
-	values = values.map(function(value){
+	values = values.map(function(value) {
 		return value.toString();
 	});
 	return this.set("expressions", values);

@@ -6,25 +6,19 @@ const { SimpleGoogleAnalytics, Request, MetricFilter } = require("../index.js");
 (async function() {
 	var analytics = new SimpleGoogleAnalytics(path.join(__dirname, "../key.json"));
 
-	var request = (new Request())
+	var request = new Request()
 		.view(process.env.GA_VIEW_ID)
 		.results(10)
-		.dimensions("pagePath","pageTitle")
+		.dimensions("pagePath", "pageTitle")
 		.metrics("pageviews", "users")
 		.removeMetric("users")
 		.removeDimension("pageTitle")
-		.dateRange({
-			from: "startOfMonth-1m",
-			to: "startOfMonth-1d"
-		})
 		// .metric("users")
 		.orderDesc("pageviews")
 		.orderAsc("users")
 		.removeOrder("users");
 
-	var filter = (new MetricFilter())
-		.metric("pageviews")
-		.lessThan(2500);
+	var filter = new MetricFilter().metric("pageviews").lessThan(2500);
 
 	request.metricFilter(filter);
 

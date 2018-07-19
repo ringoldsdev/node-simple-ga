@@ -14,12 +14,6 @@ module.exports = {
 		return this.createFromParams(params);
 	},
 	createFromParams: function(params) {
-		return new google.auth.JWT(
-			params.email,
-			null,
-			params.privateKey,
-			params.permissions,
-			null
-		);
+		return new google.auth.JWT(params.email, null, params.privateKey, params.permissions, null);
 	}
 };

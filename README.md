@@ -9,7 +9,7 @@ It should be much easier to retrieve data from the Google Analytics API and this
 
 Getting the top 10 links is as simple as this:
 
-```**JavaScriptnode-simple-gaconst** analytics = new SimpleGoogleAnalytics("./key.json");
+```**JavaScriptnode-simple-gaconst** analytics = new SimpleGA("./key.json");
 
 var request = (new Request())
 	.view(12345678)
@@ -44,7 +44,7 @@ This package is not and will not be a data processing package. Data processing i
 ## Installation
 To use the package, run:
 ```JavaScript
-npm i simple-google-analytics
+npm i node-simple-ga
 ```
 Before using the package, you must create and set up a [Service Account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount). You can also watch a video tutorial on [how to set up a Service account](https://www.youtube.com/watch?v=r6cWB0xnOwE). While the title says it's a PHP tutorial, it doesn't really matter because you won't be using PHP anyway. Focus on the account creation and granting read access to the service account.
 ## Usage
@@ -72,14 +72,14 @@ Optionally:
 
 ```JavaScript
 const {
-	SimpleGoogleAnalytics,
+	SimpleGA,
 	Request,
 	MetricFilter,
 	DimensionFilter
 } = require("simple-google-analytics");
 
 (async function() {
-	var analytics = new SimpleGoogleAnalytics("./key.json");
+	var analytics = new SimpleGA("./key.json");
 
 	var request1 = (new Request())
 		.view(XXXXXXXX)
