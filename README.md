@@ -1,8 +1,10 @@
 
 
+
 # Simple Google Analytics client for NodeJs
 A simple to use NodeJs package for the Google Analytics Reporting API.
 This is still very much work in progress so please check back.
+**Note:** Recent v0.3.0 update removed the need to manually create filter objects. Please see the demo.
 
 ## Down to business
 It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data let it handle the rest.
@@ -13,11 +15,10 @@ Getting the top 10 links is as simple as this:
 var analytics = new SimpleGA("./key.json");
 
 var request = (new Request())
-	.view(12345678)
-	.results(10)
-	.dimension("pagePath")
-	.metric("pageviews")
-	.orderDesc("pageviews");
+	.from(12345678)
+	.fetch("pagepath","pageviews")
+	.orderDesc("pageviews")
+	.results(10);
 	
 var data = await analytics.run(request);
 ```	
@@ -74,39 +75,22 @@ Optionally:
 ```JavaScript
 const {
 	SimpleGA,
-	Request,
-	MetricFilter,
-	DimensionFilter
+	Request
 } = require("node-simple-ga");
 
 (async function() {
 	var analytics = new SimpleGA("./key.json");
 
-	var request1 = (new Request())
-		.view(XXXXXXXX)
+	var request1 = new Request()
+		.from(XXXXXXXX)
+		.fetch("pagepath","pageviews","users")
+		.where("pagepath").not().contains("/archive")
+		.where("country").is("US")
+		.where("pageviews").lessThan(101)
 		.results(10)
-		.dimension("pagePath")
-		.metrics(["pageviews","users"])
 		.orderDesc("users");
 
-	var pagePathFilter = (new DimensionFilter())
-		.dimension("pagePath")
-		.contains("/archive/")
-		.not();
-	
-	var countryFilter = (new DimensionFilter())
-		.dimension("country")
-		.matches("US");
-
-	request.dimensionFilters(pagePathFilter,countryFilter);
-
-	var pageviewsFilter = (new MetricFilter())
-		.metric("pageviews")
-		.lessThanEqualTo(100);
-
-	request.metricFilter(pageviewsFilter);
-
-	var request2 = request1.clone().view(YYYYYYYY);
+	var request2 = request1.clone().from(YYYYYYYY);
 
 	try {
 		var {data1, data2} = await Promise.all([
@@ -118,7 +102,7 @@ const {
 	}
 })();
 ```
-Since it's not possible to use negative lookups in Google Analytics (e.g. urls that don't contain something), you must first look up all urls with the thing you want to avoid and then negate the operation (in this case with .not(), but it's also possible with .inverse())
+Since it's not possible to use negative lookups in Google Analytics (e.g. urls that don't contain something), you must first look up all urls with the thing you want to avoid and then negate the operation (in this case with .not())
 
 Please note that if you don't specify a date, only the last 7 days, excluding today, will be processed.
 

@@ -362,11 +362,7 @@ Request.prototype.where = function(...values) {
 	return this;
 }
 
-Request.prototype.whereNot = function(...values) {
-	values = this.getValues(values);
-	values = ApiHelper.sortMetricsDimensions(values);
-	metricFilterList = values.metrics;
-	dimensionFilterList = values.dimensions;
+Request.prototype.not = function() {
 	notFilter = true;
 	return this;
 }
