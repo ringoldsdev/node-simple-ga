@@ -3,7 +3,13 @@
 
 var ObjectBuilder = require("../ObjectBuilder");
 var ApiHelper = require("../ApiHelper");
+var DimensionFilter = require("../DimensionFilter");
+var MetricFilter = require("../MetricFilter");
 var moment = require("moment");
+
+var metricFilterList = [];
+var dimensionFilterList = [];
+var notFilter = false;
 
 var Request = function() {};
 
@@ -121,11 +127,6 @@ Request.prototype.lastWeek = function() {
 		startDate,
 		endDate
 	}]);
-}
-
-Request.prototype.period = function(str) {
-
-	
 }
 
 Request.prototype.dateRange = function(params) {
@@ -299,42 +300,43 @@ Request.prototype.removeOrders = function(...values) {
 	return this.remove("orderBys", "fieldName", values);
 };
 
-Request.prototype.filters = function(type, filters) {
-	filters = makeFiltersObject(filters);
-	return this.append(type, filters);
-};
-
-Request.prototype.andFilters = function(type, filters) {
-	filters = makeFiltersObject(filters, "AND");
-	return this.append(type, filters);
-};
-
 Request.prototype.filter = function(type, filter) {
 	return this.filters(type, [filter]);
 };
 
-Request.prototype.metricOrFilters = function(filters) {
-	return this.filters("metricFilterClauses", filters, "OR");
+Request.prototype.filters = function(type, filters) {
+	filters = makeFiltersObject(filters,"AND");
+	return this.append(type, filters);
 };
 
-Request.prototype.metricFilters = function(filters, operator = "AND") {
-	return this.filters("metricFilterClauses", filters);
+Request.prototype.orFilters = function(type, filters) {
+	filters = makeFiltersObject(filters);
+	return this.append(type, filters);
 };
+
 
 Request.prototype.metricFilter = function(filter) {
 	return this.filter("metricFilterClauses", filter);
 };
 
-Request.prototype.dimensionOrFilters = function(filters) {
-	return this.filters("dimensionFilterClauses", filters, "OR");
+Request.prototype.metricFilters = function(filters) {
+	return this.filters("metricFilterClauses", filters);
 };
 
-Request.prototype.dimensionFilters = function(filters, operator = "AND") {
-	return this.filters("dimensionFilterClauses", filters);
+Request.prototype.metricOrFilters = function(filters) {
+	return this.orFilters("metricFilterClauses", filters);
 };
 
 Request.prototype.dimensionFilter = function(filter) {
 	return this.filter("dimensionFilterClauses", filter);
+};
+
+Request.prototype.dimensionFilters = function(filters) {
+	return this.filters("dimensionFilterClauses", filters);
+};
+
+Request.prototype.dimensionOrFilters = function(filters) {
+	return this.orFilters("dimensionFilterClauses", filters);
 };
 
 Request.prototype.clearDimensionFilters = function() {
@@ -347,11 +349,114 @@ Request.prototype.clearMetricFilters = function() {
 
 Request.prototype.clearFilters = function() {
 	this.clearDimensionFilters();
-	return this.clearMetricFilters();
+	this.clearMetricFilters();
+	return this;
 };
 
-Request.prototype.lastMonth = function() {
-	return this.cleaMetricFilters();
-};
+Request.prototype.where = function(...values) {
+	values = this.getValues(values);
+	values = ApiHelper.sortMetricsDimensions(values);
+	metricFilterList = values.metrics;
+	dimensionFilterList = values.dimensions;
+	return this;
+}
+
+Request.prototype.filterConditions = function(values, dimensionCondition=null, metricCondition=null) {	
+
+	if(dimensionCondition && dimensionFilterList.length > 0) {
+		var dimensionValues = values;
+		if(dimensionCondition === "IN_LIST") {
+			dimensionValues = [dimensionValues];
+		}
+		var filters = [];
+		dimensionFilterList.forEach(function(name){
+			dimensionValues.forEach(function(value){
+				var f = new DimensionFilter()
+					.dimension(name)
+					.condition(dimensionCondition, Array.isArray(value) ? value : [value])
+				if(notFilter) {
+					f.not();
+				}
+				filters.push(f);
+			});
+		});
+		if(filters.length == 1) {
+			this.dimensionFilter(filters[0]);
+		} else {
+			this.dimensionOrFilters(filters);
+		}
+		dimensionFilterList = [];
+	}
+
+	if(metricCondition && metricFilterList.length > 0) {
+		var metricValues = values;
+		var filters = [];
+		metricFilterList.forEach(function(name){
+			metricValues.forEach(function(value){
+				var f = new MetricFilter()
+					.metric(name)
+					.condition(metricCondition,value)
+				if(notFilter) {
+					f.not();
+				}
+				filters.push(f);
+			});
+		});
+		if(filters.length == 1) {
+			this.metricFilter(filters[0]);
+		} else {
+			this.metricOrFilters(filters);
+		}
+		metricFilterList = [];
+	}
+
+	return this;
+}
+
+Request.prototype.equals = function(...values) {
+	notFilter = false;
+	return this.filterConditions(values, "EXACT", "EQUAL");
+}
+
+Request.prototype.is = function(...values) {
+	return this.equals(values);
+}
+
+Request.prototype.matchesRegex = function(...values) {
+	notFilter = false;
+	return this.filterConditions(values, "REGEXP");
+}
+
+Request.prototype.beginsWith = function(...values) {
+	notFilter = false;
+	return this.filterConditions(values, "BEGINS_WITH");
+}
+
+Request.prototype.endsWith = function(...values) {
+	notFilter = false;
+	return this.filterConditions(values, "ENDS_WITH");
+}
+
+Request.prototype.contains = function(...values) {
+	notFilter = false;
+	return this.filterConditions(values, "PARTIAL");
+}
+
+Request.prototype.greaterThan = function(...values) {
+	notFilter = false;
+	return this.filterConditions(values, "NUMERIC_GREATER_THAN", "GREATER_THAN");
+}
+
+Request.prototype.lessThan = function(...values) {
+	notFilter = false;
+	return this.filterConditions(values, "NUMERIC_LESS_THAN", "LESS_THAN");
+}
+
+Request.prototype.inList = function(...values) {
+	notFilter = false;
+	return this.filterConditions(values, "IN_LIST");
+}
+
+
 
 module.exports = Request;

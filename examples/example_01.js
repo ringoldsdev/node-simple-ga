@@ -9,19 +9,11 @@ const { SimpleGA, Request, MetricFilter } = require("../index.js");
 	var request = new Request()
 		.from(process.env.GA_VIEW_ID)
 		.fetch("pagepath","pagetitle","pageviews")
-		.lastWeek()
-		.get(10)
-
-	var filter = new MetricFilter().metric("pageviews").lessThan(2500);
-
-	request.metricFilter(filter);
-
-	request.clearMetricFilters();
+		.where("pagepath").beginsWith("/zinas/")
+		.orderDesc("pageviews")
+		.results(100)
 
 	try {
-		// Make the request and fetch data
-		// console.log(request.make());
-		// var data = await analytics.runRaw(request);
 		var data = await analytics.run(request);
 		console.log(data);
 	} catch (err) {
