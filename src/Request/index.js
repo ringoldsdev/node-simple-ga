@@ -3,6 +3,7 @@
 
 var ObjectBuilder = require("../ObjectBuilder");
 var ApiHelper = require("../ApiHelper");
+var moment = require("moment");
 
 var Request = function() {};
 
@@ -78,6 +79,46 @@ Request.prototype.precise = function() {
 };
 
 // Date functions
+
+Request.prototype.today = function() {
+	var now = moment().format("YYYY-MM-DD");
+	return this.set("dateRanges", [{
+		startDate: now,
+		endDate: now
+	}]);
+}
+
+Request.prototype.yesterday = function() {
+	var now = moment().format("YYYY-MM-DD").subtract(1,"day");
+	return this.set("dateRanges", [{
+		startDate: now,
+		endDate: now
+	}]);
+}
+
+Request.prototype.thisWeek = function() {
+	var startDate = moment().startOf('isoWeek').format("YYYY-MM-DD");
+	var endDate = moment().format("YYYY-MM-DD");
+	return this.set("dateRanges", [{
+		startDate,
+		endDate
+	}]);
+}
+
+Request.prototype.lastWeek = function() {
+	var weekStart = moment().startOf('isoWeek');
+	var startDate = moment(weekStart).subtract(7,"days").format("YYYY-MM-DD");
+	var endDate = moment(weekStart).subtract(1,"day").format("YYYY-MM-DD");
+	return this.set("dateRanges", [{
+		startDate,
+		endDate
+	}]);
+}
+
+Request.prototype.period = function(str) {
+
+	
+}
 
 Request.prototype.dateRange = function(params) {
 	var dateRange = {};
