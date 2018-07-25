@@ -37,6 +37,10 @@ const makeFiltersObject = function(filters, operator = "OR") {
 	};
 };
 
+Request.prototype.from = function(viewId) {
+	return this.view(viewId);
+}
+
 Request.prototype.view = function(viewId) {
 	viewId = ApiHelper.generateApiName(viewId);
 	return this.set("viewId", viewId);
@@ -45,6 +49,10 @@ Request.prototype.view = function(viewId) {
 Request.prototype.pageSize = function(size) {
 	return this.set("pageSize", size);
 };
+
+Request.prototype.get = function(count) {
+	return this.results(count);
+}
 
 Request.prototype.results = function(count) {
 	return this.pageSize(count);
@@ -166,7 +174,7 @@ Request.prototype.fetch = function(...values) {
 	if(values.dimensions.length > 0) {
 		this.dimensions(values.dimensions);
 	}
-	
+
 	return this;
 };
 
