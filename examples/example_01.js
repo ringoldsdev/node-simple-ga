@@ -9,7 +9,7 @@ const { SimpleGA, Request, MetricFilter } = require("../index.js");
 	var request = new Request()
 		.from(process.env.GA_VIEW_ID)
 		.fetch("pagepath","pagetitle","pageviews")
-		.where("pagepath").beginsWith("/zinas/")
+		.whereNot("pagepath").equals("/")
 		.orderDesc("pageviews")
 		.results(100)
 

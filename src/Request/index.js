@@ -358,6 +358,16 @@ Request.prototype.where = function(...values) {
 	values = ApiHelper.sortMetricsDimensions(values);
 	metricFilterList = values.metrics;
 	dimensionFilterList = values.dimensions;
+	notFilter = false;
+	return this;
+}
+
+Request.prototype.whereNot = function(...values) {
+	values = this.getValues(values);
+	values = ApiHelper.sortMetricsDimensions(values);
+	metricFilterList = values.metrics;
+	dimensionFilterList = values.dimensions;
+	notFilter = true;
 	return this;
 }
 
@@ -414,7 +424,6 @@ Request.prototype.filterConditions = function(values, dimensionCondition=null, m
 }
 
 Request.prototype.equals = function(...values) {
-	notFilter = false;
 	return this.filterConditions(values, "EXACT", "EQUAL");
 }
 
@@ -423,40 +432,31 @@ Request.prototype.is = function(...values) {
 }
 
 Request.prototype.matchesRegex = function(...values) {
-	notFilter = false;
 	return this.filterConditions(values, "REGEXP");
 }
 
 Request.prototype.beginsWith = function(...values) {
-	notFilter = false;
 	return this.filterConditions(values, "BEGINS_WITH");
 }
 
 Request.prototype.endsWith = function(...values) {
-	notFilter = false;
 	return this.filterConditions(values, "ENDS_WITH");
 }
 
 Request.prototype.contains = function(...values) {
-	notFilter = false;
 	return this.filterConditions(values, "PARTIAL");
 }
 
 Request.prototype.greaterThan = function(...values) {
-	notFilter = false;
 	return this.filterConditions(values, "NUMERIC_GREATER_THAN", "GREATER_THAN");
 }
 
 Request.prototype.lessThan = function(...values) {
-	notFilter = false;
 	return this.filterConditions(values, "NUMERIC_LESS_THAN", "LESS_THAN");
 }
 
 Request.prototype.inList = function(...values) {
-	notFilter = false;
 	return this.filterConditions(values, "IN_LIST");
 }
-
-
 
 module.exports = Request;
