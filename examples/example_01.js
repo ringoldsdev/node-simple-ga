@@ -9,8 +9,8 @@ const { SimpleGA, Request, MetricFilter } = require("../index.js");
 	var request = new Request()
 		.view(process.env.GA_VIEW_ID)
 		.results(10)
-		.dimensions("pagePath", "pageTitle")
-		.metricDesc("pageviews")
+		.fetch("pagepath","pagetitle","pageviews")
+		.lastWeek()
 
 	var filter = new MetricFilter().metric("pageviews").lessThan(2500);
 

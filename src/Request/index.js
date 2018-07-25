@@ -154,6 +154,22 @@ Request.prototype.dimensions = function(...values) {
 	return this.append("dimensions", values);
 };
 
+Request.prototype.fetch = function(...values) {
+	values = this.getValues(values);
+
+	values = ApiHelper.sortMetricsDimensions(values);
+
+	if(values.metrics.length > 0) {
+		this.metrics(values.metrics);
+	}
+
+	if(values.dimensions.length > 0) {
+		this.dimensions(values.dimensions);
+	}
+	
+	return this;
+};
+
 Request.prototype.clearDimensions = function() {
 	return this.clear("dimensions");
 };
