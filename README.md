@@ -16,8 +16,8 @@ Getting the top 10 links is as simple as this:
 var analytics = new SimpleGA("./key.json");
 
 var request = (new Request())
-	.select("pagepath","pageviews")
 	.from(12345678)
+	.fetch("pagepath","pageviews")
 	.orderDesc("pageviews")
 	.results(10);
 	
@@ -132,10 +132,12 @@ is the same as
 ```Javascript
 select(["pageviews","sessions","users"])
 ```
+<hr/>
 
 #### from(*view*)
 
 Used to set the [View](https://support.google.com/analytics/answer/2649553?hl=en) you're going to process.
+<hr/>
 
 #### where(*keys*)
 
@@ -146,36 +148,44 @@ where() is followed by either not() and/or one of the operator functions. All op
 The only exception of the operator functions is the inList() function. All values that are passed in will be passed as an array of strings, since the goal of this function is to determine whether dimension value is in the list. It means that if you specify 2 keys and 3 values in the inList() operator, you'll end up with 2 inList() filters.
 
 All operator functions are found in the section called **Operator functions**.
+<hr/>
 
 #### orderDesc(*key*)
 
 Which metric or dimension will be sorted in a descending order.
+<hr/>
 
 #### orderAsc(*name*)
 
 Which metric or dimension will be sorted in an ascending order.
+<hr/>
 
 #### during(*dateFrom, dateTo*), period(*dateFrom, dateTo*)
 
 What time frame should results be selected from.
 
 *dateFrom and dateTo must be written in the YYYY-MM-DD format, meaning April 24, 2016 must be written as 2018-04-24.*
+<hr/>
 
 #### results(*count*)
 
 How many results per page should be returned. If you don't specify the amount of results, everything will be returned.
+<hr/>
 
 #### everything()
 
 Returns all results. Use on a cloned request that has an amount of results specified.
+<hr/>
 
 #### clearFilters()
 
 Removes all filters.
+<hr/>
 
 #### unselect(*keys*)
 
 Which keys will be removed from the selection.
+<hr/>
 
 #### clone()
 
@@ -189,22 +199,27 @@ Negates current filter
 ```Javascript
 where("pagetitle","dimension10").not()...
 ```
+<hr/>
 
 #### is(*values*), equals(*values*)
 
 What must the key value be equal to.
+<hr/>
 
 #### contains(*values*)
 
 What must the dimension value contain.
+<hr/>
 
 #### beginsWith(*values*)
 
 What must the dimension value begin with.
+<hr/>
 
 #### endsWith(*values*)
 
 What must the dimension value end with.
+<hr/>
 
 #### inList(*values*)
 
@@ -213,14 +228,17 @@ What must the dimension be equal to.
 where("pagetitle","dimension10").inList("apple","orange")
 ```
 *It means that pageTitle or dimension10 must be equal to either apple or orange.*
+<hr/>
 
 #### greaterThan(*values*)
 
 What must the key value be greater than.
+<hr/>
 
 #### lessThan(*values*)
 
 What must the key value be less than.
+<hr/>
 
 #### matchesRegex(*expressions*)
 
