@@ -129,17 +129,33 @@ Request.prototype.lastWeek = function() {
 	}]);
 }
 
-Request.prototype.dateRange = function(params) {
-	var dateRange = {};
-	if (params.from) {
-		dateRange.startDate = params.from;
-	}
-	if (params.to) {
-		dateRange.endDate = params.to;
-	}
-	// For now only 1 date range is permitted
-	return this.set("dateRanges", [dateRange]);
+Request.prototype.period = function(from, to) {
+	return this.set("dateRanges", [{
+		startDate: from,
+		endDate: to
+	}]);
 };
+
+Request.prototype.during = function(from, to) {
+	return this.period(from,to);
+}
+
+Request.prototype.periods = function(...params) {
+	// clear previous dates
+	this.set("dateRanges",[]);
+	params.forEach(function(param){
+		if(Array.isArray(param) && param.length == 2) {
+			this.period(param[0],param[1]);
+			return;
+		}
+		this.period(param);
+	});
+	return this;
+};
+
+Request.prototype.to = function(date) {
+	return this.set("dateRanges", "endDate", date);
+}
 
 Request.prototype.dimension = function(dimension) {
 	dimension = ApiHelper.generateApiName(dimension);
@@ -178,6 +194,10 @@ Request.prototype.fetch = function(...values) {
 
 	return this;
 };
+
+Request.prototype.select = function(...values) {
+	return this.fetch(values);
+}
 
 Request.prototype.clearDimensions = function() {
 	return this.clear("dimensions");
