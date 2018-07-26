@@ -121,9 +121,9 @@ Before processing data, you should know the difference between dimensions and me
 
 ### Request functions
 
-#### select(*keys*), fetch(*keys*)
+#### select(*keys*), select([*keys*]), fetch(*keys*), fetch([*keys*])
 
-Specify in a case-insensitive manner which dimensions and metrics you're going to need.  You can pass both, an array or a list of metrics. It's useful if you generate metrics dynamically. However, if you pass a custom key, such as a computed metric, it's up to you to ensure it's written correctly.
+Specify in a case-insensitive manner which dimensions and metrics you're going to need.  You can pass both, an array or a list of metrics or dimensions. It's useful if you generate metrics dynamically. However, if you pass a custom key, such as a computed metric, it's up to you to ensure it's written correctly.
 
 ```Javascript
 select("pagepath","sessions","users")
@@ -136,10 +136,10 @@ select(["pageviews","sessions","users"])
 
 #### from(*view*)
 
-Used to set the [View](https://support.google.com/analytics/answer/2649553?hl=en) you're going to process.
+Used to set the [View](https://support.google.com/analytics/answer/2649553?hl=en) you're going to process. You can only specify one view per request.
 <hr/>
 
-#### where(*keys*)
+#### where(*keys*), where([*keys*])
 
 Which key or keys  will be filtered. You can specify multiple keys so that the following filter will be applied to all keys. Note that if you specify multiple keys at the same time, an **OR** operation will be applied, meaning one of the filters must be true. 
 
@@ -182,7 +182,7 @@ Returns all results. Use on a cloned request that has an amount of results speci
 Removes all filters.
 <hr/>
 
-#### unselect(*keys*)
+#### unselect(*keys*), unselect([*keys*])
 
 Which keys will be removed from the selection.
 <hr/>
@@ -201,27 +201,27 @@ where("pagetitle","dimension10").not()...
 ```
 <hr/>
 
-#### is(*values*), equals(*values*)
+#### is(*values*), is([*values*]), equals(*values*), equals([*values*])
 
 What must the key value be equal to.
 <hr/>
 
-#### contains(*values*)
+#### contains(*values*), contains([*values*])
 
 What must the dimension value contain.
 <hr/>
 
-#### beginsWith(*values*)
+#### beginsWith(*values*), beginsWith([*values*])
 
 What must the dimension value begin with.
 <hr/>
 
-#### endsWith(*values*)
+#### endsWith(*values*), endsWith([*values*])
 
 What must the dimension value end with.
 <hr/>
 
-#### inList(*values*)
+#### inList(*values*), inList([*values*])
 
 What must the dimension be equal to.
 ```Javascript
@@ -230,17 +230,17 @@ where("pagetitle","dimension10").inList("apple","orange")
 *It means that pageTitle or dimension10 must be equal to either apple or orange.*
 <hr/>
 
-#### greaterThan(*values*)
+#### greaterThan(*values*), greaterThan([*values*])
 
 What must the key value be greater than.
 <hr/>
 
-#### lessThan(*values*)
+#### lessThan(*values*), lessThan([*values*])
 
 What must the key value be less than.
 <hr/>
 
-#### matchesRegex(*expressions*)
+#### matchesRegex(*expressions*), matchesRegex([*expressions*])
 
 What regular expression must the dimension value be less than.
 
