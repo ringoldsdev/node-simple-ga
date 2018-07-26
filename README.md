@@ -1,14 +1,13 @@
-
-
-
-
 # Simple Google Analytics client for NodeJs
-A simple to use NodeJs package for the Google Analytics Reporting API.
+
+It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data let it handle the rest.
+
 This is still very much work in progress so please check back.
+
 **Note:** Recent v0.3.0 update removed the need to manually create filter objects. Please see the demo.
 
 ## Down to business
-It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data let it handle the rest.
+
 
 Getting the top 10 links is as simple as this:
 
@@ -39,7 +38,7 @@ By default, data will be returned as an array of objects in the format below. Fo
 	...
 ]
 ```
-It's that simple!
+
 ## What it really is
 **node-simple-ga** helps you create and make [Reporting API v4 compliant](https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet) JSON requests in a function-oriented manner, parse the response, and paginate additional requests if requested by the user. Further improvements will be focused on creating requests in a more robust and efficient way.
 ## What it won't be
