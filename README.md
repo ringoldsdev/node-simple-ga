@@ -242,7 +242,7 @@ What must the key value be less than.
 
 #### matchesRegex(*expressions*), matchesRegex([*expressions*])
 
-What regular expression must the dimension value be less than.
+What regular expression must the dimension values match.
 
 *Please note that Google Analytics allows the use of a limited amount of regular expressions. For example, it doesn't allow negative lookaheads, which is why the not() function must be used.*
 
