@@ -1078,9 +1078,6 @@ module.exports = {
 
 		values.forEach(function(value){
 			value = that.fixName(value);
-			if(!(value in metricDimensionData)) {
-				throw new Error(`Unknown metric or dimension "${value}"!`);
-			}
 			result[metricDimensionData[value]].push(value);
 		});
 		

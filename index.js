@@ -86,7 +86,7 @@ SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 
 				// If there are more pages, get the results
 				if (report.nextPageToken) {
-					request.setPageToken(report.nextPageToken);
+					request.pageToken(report.nextPageToken);
 					var requestedData = await that.runRaw(
 						request,
 						{

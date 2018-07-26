@@ -7,15 +7,16 @@ const { SimpleGA, Request, MetricFilter } = require("../index.js");
 	var analytics = new SimpleGA(path.join(__dirname, "../key.json"));
 
 	var request = new Request()
-		.select("pagepath","pagetitle","pageviews")
+		.select("pagepath","pagetitle","pageviews","sessions","users")
 		.from(process.env.GA_VIEW_ID)
 		.where("pagepath").not().equals("/")
 		.during("2018-07-23","2018-07-25")
 		.orderDesc("pageviews")
-		.results(100)
+		.unselect("pagepath","sessions","users")
+		// .results(2)
 
 	try {
-		var data = await analytics.run(request);
+		var data = await analytics.run(request,{pages: 2});
 		console.log(data);
 	} catch (err) {
 		console.error(err);

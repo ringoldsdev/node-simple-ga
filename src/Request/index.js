@@ -64,6 +64,10 @@ Request.prototype.results = function(count) {
 	return this.pageSize(count);
 };
 
+Request.prototype.everything = function() {
+	return this.pageSize(null);
+};
+
 Request.prototype.pageToken = function(token) {
 	return this.set("pageToken", token);
 };
@@ -153,10 +157,6 @@ Request.prototype.periods = function(...params) {
 	return this;
 };
 
-Request.prototype.to = function(date) {
-	return this.set("dateRanges", "endDate", date);
-}
-
 Request.prototype.dimension = function(dimension) {
 	dimension = ApiHelper.generateApiName(dimension);
 	dimension = makeDimensionObject(dimension);
@@ -209,10 +209,29 @@ Request.prototype.removeDimension = function(name) {
 };
 
 Request.prototype.removeDimensions = function(...values) {
+	var that = this;
 	values = this.getValues(values);
-	values = values.map(ApiHelper.generateApiName);
-	return this.remove("dimensions", "name", values);
+	values.forEach(function(value){
+		that.removeDimension(value)
+	})
+	return this;
 };
+
+Request.prototype.unselect = function(...keys) {
+	keys = this.getValues(keys);
+
+	keys = ApiHelper.sortMetricsDimensions(keys);
+
+	if(keys.metrics.length > 0) {
+		this.removeMetrics(keys.metrics);
+	}
+
+	if(keys.dimensions.length > 0) {
+		this.removeDimensions(keys.dimensions);
+	}
+
+	return this;	
+}
 
 Request.prototype.metric = function(name) {
 	name = ApiHelper.generateApiName(name);
@@ -272,9 +291,12 @@ Request.prototype.removeMetric = function(name) {
 };
 
 Request.prototype.removeMetrics = function(...values) {
+	var that = this;
 	values = this.getValues(values);
-	values = values.map(ApiHelper.generateApiName);
-	return this.remove("dimensions", "name", values);
+	values.forEach(function(value){
+		that.removeMetric(value)
+	})
+	return this;
 };
 
 Request.prototype.filtersExpression = function(expression) {
