@@ -1,3 +1,4 @@
+
 # Simple Google Analytics client for NodeJs
 
 It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data let it handle the rest.
@@ -15,8 +16,8 @@ Getting the top 10 links is as simple as this:
 var analytics = new SimpleGA("./key.json");
 
 var request = (new Request())
+	.select("pagepath","pageviews")
 	.from(12345678)
-	.fetch("pagepath","pageviews")
 	.orderDesc("pageviews")
 	.results(10);
 	
@@ -120,7 +121,7 @@ Before processing data, you should know the difference between dimensions and me
 
 ### Request functions
 
-**select(** *keys* **)**, **fetch(** *keys* **)**
+#### select(*keys*), fetch(*keys*)
 
 Specify in a case-insensitive manner which dimensions and metrics you're going to need.  You can pass both, an array or a list of metrics. It's useful if you generate metrics dynamically. However, if you pass a custom key, such as a computed metric, it's up to you to ensure it's written correctly.
 
@@ -132,11 +133,11 @@ is the same as
 select(["pageviews","sessions","users"])
 ```
 
-**from(** *view* **)**
+#### from(*view*)
 
-Used to set the View you're going to process
+Used to set the [View](https://support.google.com/analytics/answer/2649553?hl=en) you're going to process.
 
-**where(** *keys* **)**
+#### where(*keys*)
 
 Which key or keys  will be filtered. You can specify multiple keys so that the following filter will be applied to all keys. Note that if you specify multiple keys at the same time, an **OR** operation will be applied, meaning one of the filters must be true. 
 
@@ -146,66 +147,66 @@ The only exception of the operator functions is the inList() function. All value
 
 All operator functions are found in the section called **Operator functions**.
 
-**orderDesc(** *name* **)**
+#### orderDesc(*key*)
 
 Which metric or dimension will be sorted in a descending order.
 
-**orderAsc(** *name* **)**
+#### orderAsc(*name*)
 
 Which metric or dimension will be sorted in an ascending order.
 
-**during(** *dateFrom, dateTo* **)**, **period(** *dateFrom, dateTo* **)**
+#### during(*dateFrom, dateTo*), period(*dateFrom, dateTo*)
 
 What time frame should results be selected from.
 
 *dateFrom and dateTo must be written in the YYYY-MM-DD format, meaning April 24, 2016 must be written as 2018-04-24.*
 
-**results(** *count* **)**
+#### results(*count*)
 
 How many results per page should be returned. If you don't specify the amount of results, everything will be returned.
 
-**everything()**
+#### everything()
 
 Returns all results. Use on a cloned request that has an amount of results specified.
 
-**clearFilters()**
+#### clearFilters()
 
 Removes all filters.
 
-**unselect(** *keys* **)**
+#### unselect(*keys*)
 
 Which keys will be removed from the selection.
 
-**clone()**
+#### clone()
 
 Returns an identical copy of the request object.
 
 ## Operator functions
 
-**not()**
+#### not()
 
 Negates current filter
 ```Javascript
 where("pagetitle","dimension10").not()...
 ```
 
-**is(** *values* **)**, **equals(** *values* **)**
+#### is(*values*), equals(*values*)
 
 What must the key value be equal to.
 
-**contains(** *values* **)**
+#### contains(*values*)
 
 What must the dimension value contain.
 
-**beginsWith(** *values* **)**
+#### beginsWith(*values*)
 
 What must the dimension value begin with.
 
-**endsWith(** *values* **)**
+#### endsWith(*values*)
 
 What must the dimension value end with.
 
-**inList(** *values* **)**
+#### inList(*values*)
 
 What must the dimension be equal to.
 ```Javascript
@@ -213,15 +214,15 @@ where("pagetitle","dimension10").inList("apple","orange")
 ```
 *It means that pageTitle or dimension10 must be equal to either apple or orange.*
 
-**greaterThan(** *values* **)**
+#### greaterThan(*values*)
 
 What must the key value be greater than.
 
-**lessThan(** *values* **)**
+#### lessThan(*values*)
 
 What must the key value be less than.
 
-**matchesRegex(** *expressions* **)**
+#### matchesRegex(*expressions*)
 
 What regular expression must the dimension value be less than.
 
