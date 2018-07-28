@@ -404,6 +404,32 @@ Request.prototype.where = function(...values) {
 	return this;
 }
 
+Request.prototype.whereDimensions = function(...values) {
+	values = this.getValues(values);
+	dimensionFilterList = values;
+	notFilter = false;
+	return this;
+}
+
+Request.prototype.whereDimension = function(value) {
+	dimensionFilterList = [value];
+	notFilter = false;
+	return this;
+}
+
+Request.prototype.whereMetrics = function(...values) {
+	values = this.getValues(values);
+	metricFilterList = values;
+	notFilter = false;
+	return this;
+}
+
+Request.prototype.whereMetric = function(value) {
+	metricFilterList = [values];
+	notFilter = false;
+	return this;
+}
+
 Request.prototype.not = function() {
 	notFilter = true;
 	return this;
@@ -421,7 +447,8 @@ Request.prototype.filterConditions = function(values, dimensionCondition=null, m
 			dimensionValues.forEach(function(value){
 				var f = new DimensionFilter()
 					.dimension(name)
-					.condition(dimensionCondition, Array.isArray(value) ? value : [value])
+					// All values must be converted to a string
+					.condition(dimensionCondition, Array.isArray(value) ? value : [value.toString()])
 				if(notFilter) {
 					f.not();
 				}
@@ -443,7 +470,8 @@ Request.prototype.filterConditions = function(values, dimensionCondition=null, m
 			metricValues.forEach(function(value){
 				var f = new MetricFilter()
 					.metric(name)
-					.condition(metricCondition,value)
+					// All values must be converted to a string
+					.condition(metricCondition,value.toString())
 				if(notFilter) {
 					f.not();
 				}

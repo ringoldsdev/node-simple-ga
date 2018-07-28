@@ -1,4 +1,5 @@
 
+
 # Simple Google Analytics client for NodeJs
 
 It should be much easier to retrieve data from the Google Analytics API and this package helps you achieve that. Focus on analyzing the data let it handle the rest.
@@ -16,8 +17,8 @@ Getting the top 10 links is as simple as this:
 var analytics = new SimpleGA("./key.json");
 
 var request = (new Request())
+	.select("pagepath","pageviews")
 	.from(12345678)
-	.fetch("pagepath","pageviews")
 	.orderDesc("pageviews")
 	.results(10);
 	
@@ -148,6 +149,14 @@ where() is followed by either not() and/or one of the operator functions. All op
 The only exception of the operator functions is the inList() function. All values that are passed in will be passed as an array of strings, since the goal of this function is to determine whether dimension value is in the list. It means that if you specify 2 keys and 3 values in the inList() operator, you'll end up with 2 inList() filters.
 
 All operator functions are found in the section called **Operator functions**.
+<hr/>
+
+#### whereDimension(*key*), whereDimensions(*keys*), whereDimensions(*[keys]*)
+Which dimension(-s) will be targeted by the filter. If you're using default dimensions, you can use the where() function. Use these functions if you want to target custom dimensions.
+<hr/>
+
+#### whereMetric(*key*), whereMetrics(*keys*), whereMetrics(*[keys]*)
+Which metrics(-s) will be targeted by the filter. If you're using default metrics, you can use the where() function. Use these functions if you want to target a custom metrics. 
 <hr/>
 
 #### orderDesc(*key*)
