@@ -67,6 +67,10 @@ SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 					};
 				}
 
+				if(!("rows" in report.data)) {
+					return resolve({ headers, entries });
+				}
+
 				report.data.rows.forEach(function(entry) {
 					entries.push({
 						dimensions: entry.dimensions,
