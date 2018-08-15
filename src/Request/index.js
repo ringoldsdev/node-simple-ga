@@ -56,10 +56,6 @@ Request.prototype.pageSize = function(size) {
 	return this.set("pageSize", size);
 };
 
-Request.prototype.get = function(count) {
-	return this.results(count);
-}
-
 Request.prototype.results = function(count) {
 	return this.pageSize(count);
 };
@@ -526,5 +522,5 @@ Request.prototype.inList = function(...values) {
 }
 
 module.exports = function() {
-	return new Request().clone();
+	return new Request().clone().results(10000);
 }

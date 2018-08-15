@@ -37,6 +37,7 @@ const SimpleGA = function(param) {
 };
 
 SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
+
 	var that = this;
 	return new Promise(function(resolve, reject) {
 		var entries = [];
@@ -53,6 +54,7 @@ SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 				if (err) {
 					return reject(err);
 				}
+
 
 				var report = response.data.reports[0];
 
@@ -78,13 +80,8 @@ SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 					});
 				});
 
-				// If page count is not specified, stop here
-				if (!params.pages) {
-					return resolve({ headers, entries });
-				}
-
 				// If we're at the last page, stop
-				if (currentPage === params.pages) {
+				if (params.pages && currentPage === params.pages) {
 					return resolve({ headers, entries });
 				}
 
@@ -108,6 +105,11 @@ SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 };
 
 SimpleGA.prototype.run = async function(request, params = {}) {
+
+	if(request.get("pageSize") && !params.pages) {
+		params.pages = 1;
+	}
+
 	var result = await this.runRaw(request, params);
 
 	if (params.rawResults) {
