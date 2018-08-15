@@ -16,7 +16,7 @@ Getting the top 10 links is as simple as this:
 ```JavaScript
 var analytics = new SimpleGA("./key.json");
 
-var request = (new Request())
+var request = Request()
 	.select("pagepath","pageviews")
 	.from(12345678)
 	.orderDesc("pageviews")
@@ -84,7 +84,7 @@ const {
 (async function() {
 	var analytics = new SimpleGA("./key.json");
 
-	var request1 = new Request()
+	var request1 = Request()
 		.select("pagepath","pageviews","users")
 		.from(XXXXXXXX)
 		.where("pagepath").not().contains("/archive/")
@@ -264,7 +264,7 @@ To limit the amount of pages, for example 2 pages (up to 20'000 results, if the 
 var analytics = new SimpleGA("keyLocation");
 
 // Build the request object
-var request = new Request()
+var request = Request()
 	...
 
 var data = await analytics.run(request,{pages: 2});
