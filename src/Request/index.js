@@ -525,4 +525,6 @@ Request.prototype.inList = function(...values) {
 	return this.filterConditions(values, "IN_LIST");
 }
 
-module.exports = Request;
+module.exports = function() {
+	return new Request().clone();
+}
