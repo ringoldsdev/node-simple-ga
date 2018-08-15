@@ -7,14 +7,15 @@ const { SimpleGA, Request } = require("../index.js");
 	var analytics = new SimpleGA(path.join(__dirname, "../key.json"));
 
 	var request = Request()
-		.select("pageviews","sessions","users")
+		.select("pagepath","pageviews","sessions","users")
 		.from(process.env.GA_VIEW_ID)
 		.during("2018-07-20","2018-07-25")
 		.orderDesc("pageviews");
 
 	try {
+		console.log(request.make());
 		var data = await analytics.run(request);
-		console.log(data);
+		// console.log(data);
 	} catch (err) {
 		console.error(err);
 	}

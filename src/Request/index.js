@@ -253,7 +253,9 @@ Request.prototype.dimensionAsc = function(name) {
 Request.prototype.metrics = function(...values) {
 	values = this.getValues(values);
 	values = values.map(ApiHelper.generateApiName);
-	values = values.map(makeMetricObject);
+	values = values.map(function(value){
+		return makeMetricObject(value);
+	});
 	return this.append("metrics", values);
 };
 
