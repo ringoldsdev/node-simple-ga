@@ -3,6 +3,7 @@
 
 var ObjectBuilder = require("../ObjectBuilder");
 var ApiHelper = require("../ApiHelper");
+
 var DimensionFilter = require("../DimensionFilter");
 var MetricFilter = require("../MetricFilter");
 var moment = require("moment");
@@ -521,6 +522,16 @@ Request.prototype.lessThan = function(...values) {
 
 Request.prototype.inList = function(...values) {
 	return this.filterConditions(values, "IN_LIST");
+}
+
+Request.prototype.registerMetric = function(name) {
+	ApiHelper.registerMetric(name);
+	return this;
+}
+
+Request.prototype.registerDimension = function(name) {
+	ApiHelper.registerDimension(name);
+	return this;
 }
 
 module.exports = function() {
