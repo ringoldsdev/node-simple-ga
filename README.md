@@ -127,7 +127,7 @@ Before processing data, you should know the difference between dimensions and me
 Specify in a case-insensitive manner which dimensions and metrics you're going to need.  You can pass both, an array or a list of metrics or dimensions. It's useful if you generate metrics dynamically. However, if you pass a custom key, such as a computed metric, it's up to you to ensure it's written correctly.
 
 ```Javascript
-select("pagepath","sessions","users")
+select("pageviews","sessions","users")
 ```
 is the same as 
 ```Javascript
