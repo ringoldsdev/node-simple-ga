@@ -57,9 +57,14 @@ Request.prototype.pageSize = function(size) {
 	return this.set("pageSize", size);
 };
 
-Request.prototype.results = function(count) {
+Request.prototype.limit = function(count) {
 	return this.pageSize(count);
 };
+
+Request.prototype.results = function(count) {
+	return this.limit(count);
+};
+
 
 Request.prototype.everything = function() {
 	return this.pageSize(null);

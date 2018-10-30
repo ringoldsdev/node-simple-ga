@@ -11,14 +11,14 @@ const { SimpleGA, Request } = require("../index.js");
 		.from(process.env.GA_VIEW_ID)
 		.during("2018-09-20","2018-09-25")
 		.orderDesc("pageviews")
-		.results(20);
+		.limit(20);
 
 	var request2 = Request()
 		.select("dimension12","entrances")
 		.from(process.env.GA_VIEW_ID)
 		.during("2018-09-20","2018-09-25")
 		.orderDesc("entrances")
-		.results(20);
+		.limit(20);
 
 	try {
 

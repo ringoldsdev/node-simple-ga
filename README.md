@@ -30,12 +30,8 @@ By default, data will be returned as an array of objects in the format below. Fo
 ```JavaScript
 [
 	{
-		dimensions: {
-			pagePath: "/"
-		},
-		metrics: {
-			pageviews: 123
-		}
+		pagePath: "/",
+		pageviews: 123
 	},
 	...
 ]
@@ -99,7 +95,7 @@ const {
 		.everything();
 
 	try {
-		var {data1, data2} = await Promise.all([
+		var [data1, data2] = await Promise.all([
 			analytics.run(request1),
 			analytics.run(request2)
 		]);
@@ -176,7 +172,7 @@ What time frame should results be selected from.
 *dateFrom and dateTo must be written in the YYYY-MM-DD format, meaning April 24, 2016 must be written as 2018-04-24.*
 <hr/>
 
-#### results(*count*)
+#### limit(*count*), results(*count*)
 
 How many results per page should be returned. If you don't specify the amount of results, everything will be returned.
 <hr/>
@@ -273,6 +269,17 @@ var data = await analytics.run(request,{pages: 2});
 Please note that while it is possible to specify the amount of results and the amount of pages, it is not advised to do so, because you might end up hitting the API limits. For example, if you have specified that you need 10 results and that you need 3 pages, you will end up making 3 requests requesting 10 results per request, which means you will get only 30 results. It's not only significantly slower but it's also wasteful.
 
 It's better to use either results() or specifying the amount of pages. 
+
+## Transforming results
+Version 0.5.0 has the ability to transform the result. For example, if you want to rename the pagePath to url, all you have to do is specify the transformation in the run command.
+
+```Javascript
+var data = await analytics.run(request,{
+	rename: {
+		pagePath: "url"
+	}
+});
+```
 
 ## Author
 Ringolds Leščinskis
