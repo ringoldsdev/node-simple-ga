@@ -32,7 +32,7 @@
   "license": "MIT",
   "dependencies": {
     "clone-deep": "^4.0.0",
-    "googleapis": "^32.0.0",
+    "googleapis": "^39.1.0",
     "moment": "^2.22.2"
   },
   "devDependencies": {
