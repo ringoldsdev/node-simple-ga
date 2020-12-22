@@ -3,6 +3,7 @@ const objectPath = require("object-path");
 // Define all actions that can be called
 const ACTIONS_SET = "set";
 const ACTIONS_APPEND = "append";
+const ACTIONS_CONCAT = "concat";
 const ACTIONS_DELETE = "delete";
 const ACTIONS_REMOVE = "remove";
 
@@ -18,10 +19,16 @@ const ACTION_HANDLERS = {
 		return projection;
 	},
 	[ACTIONS_APPEND]: function(projection, data) {
+		if(!(data.key in projection)) {
+			projection[data.key] = [];
+		}
 		if(!Array.isArray(projection[data.key])) {
 			throw new Error(`Can't append to ${data.key}! It's not an array`);
 		}
-		objectPath.push(projection, data.key, data.value);
+		let values = !Array.isArray(data.value) ? [data.value] : data.value;
+		values.forEach(function(value){
+			objectPath.push(projection, data.key, value);
+		});
 		return projection;
 	},
 	[ACTIONS_REMOVE]: ACTIONS_DELETE
