@@ -53,7 +53,32 @@ const ACTIONS = Object.entries(ACTION_HANDLERS).reduce(function(map, action) {
 	}
 }, {});
 
-initObjectBuilder = function(initActions = []) {
+const removeEmptyValues = function(obj) {
+	return Object.keys(obj)
+		.filter(function(key) {
+			return obj[key] !== null;
+		})
+		.reduce(function(newObj, key) {
+		// If key doesn't hold an object, skip it
+		if(typeof obj[key] !== "object" || Array.isArray(obj[key])) {
+			return {
+				...newObj,
+				[key]: obj[key]
+			};
+		} 
+		// If it's an object, check if it contains any keys
+		if(Object.keys(obj[key]).length > 0) {
+			return {
+				...newObj,
+				[key]: removeEmptyValues(obj[key])
+			}
+		}
+		// If there were no keys, nothing will happen
+		return newObj;
+	}, {});
+}
+
+const initObjectBuilder = function(initActions = []) {
 	let actions = initActions;
 
 	let ObjectBuilder = {};
@@ -66,9 +91,11 @@ initObjectBuilder = function(initActions = []) {
 	});
 
 	ObjectBuilder.value = function() {
-		return actions.reduce(function(projection, action) {
+		let res = actions.reduce(function(projection, action) {
 			return ACTIONS[action.type](projection, action.data);
 		}, {});
+		res = removeEmptyValues(res);
+		return res;
 	};
 
 	ObjectBuilder.clone = function() {

@@ -115,5 +115,14 @@ describe("ObjectBuilder", function() {
 			expect(res).to.deep.eq({});
 		});
 
+		it(`should delete only second level value`, function() {
+			let res = objectBuilder
+				.set(nestedKey + "." + key, 5678)
+				.set(key, 1234)
+				.delete(nestedKey + "." + key)
+				.value();
+			expect(res).to.deep.eq({ [key]: 1234 });
+		});
+
 	});
 });
