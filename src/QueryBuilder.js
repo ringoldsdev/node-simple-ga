@@ -4,7 +4,7 @@ initQueryBuilder = function({ client, objectBuilder = null}) {
 
 	let QueryBuilder = {};
 
-	QueryBuilder.toJson = function() {
+	QueryBuilder.value = function() {
 		return actions.reduce(function(projection, action) {
 			return ACTIONS[action.type](projection, action.data);
 		}, {});
@@ -18,7 +18,7 @@ initQueryBuilder = function({ client, objectBuilder = null}) {
 	// It means that the query builder can be used to construct the object,
 	// and when done constructing, you can use .then() or await to call this function
 	QueryBuilder.then = function(resolve, _reject) {
-		resolve(QueryBuilder.toJson());
+		resolve(QueryBuilder.value());
 	};
 
 	return QueryBuilder;

@@ -9,8 +9,8 @@ describe("QueryBuilder", function() {
 			queryBuilder = new QueryBuilder();
 		});
 
-		it("should have a function called toJson", function() {
-			expect(typeof queryBuilder.toJson).to.eq("function");
+		it("should have a function called value", function() {
+			expect(typeof queryBuilder.value).to.eq("function");
 		});
 
 		it("should have a function called clone", function() {
