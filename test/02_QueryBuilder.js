@@ -5,7 +5,7 @@ describe("QueryBuilder", function() {
 	let queryBuilder = null;
 
 	describe("Initialization", function() {
-		before(function() {
+		beforeEach(function() {
 			queryBuilder = new QueryBuilder();
 		});
 
@@ -20,6 +20,11 @@ describe("QueryBuilder", function() {
 		it("should have a function called then", function() {
 			expect(typeof queryBuilder.then).to.eq("function");
 		});
+
+		it("should contain correct default values", function() {
+			expect(queryBuilder.value()).to.deep.eq({ metrics: [], dimensions: [], dateRanges: []});
+		});
+
 	});
 
 	describe("Actions", function() {});

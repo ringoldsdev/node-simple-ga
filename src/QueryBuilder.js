@@ -1,13 +1,12 @@
 const ObjectBuilder = require("./ObjectBuilder");
+const { processMetric, processDimension } = require("./MetricDimensionProcessor");
 
 initQueryBuilder = function({ client, objectBuilder = null}) {
 
 	let QueryBuilder = {};
 
 	QueryBuilder.value = function() {
-		return actions.reduce(function(projection, action) {
-			return ACTIONS[action.type](projection, action.data);
-		}, {});
+		return objectBuilder.value();
 	};
 
 	QueryBuilder.clone = function() {
@@ -24,7 +23,13 @@ initQueryBuilder = function({ client, objectBuilder = null}) {
 	return QueryBuilder;
 };
 
-module.exports = function(client) {
+module.exports = function(client, config={}) {
 	const objectBuilder = new ObjectBuilder();
+	objectBuilder.set("metrics", []);
+	objectBuilder.set("dimensions", []);
+	objectBuilder.set("dateRanges", []);
+	if(config.viewId) {
+		objectBuilder.set("viewId", config.viewId);
+	}
 	return initQueryBuilder({ client, objectBuilder });
 };
