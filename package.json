@@ -33,7 +33,8 @@
   "dependencies": {
     "clone-deep": "^4.0.0",
     "googleapis": "^66.0.0",
-    "moment": "^2.22.2"
+    "moment": "^2.22.2",
+    "object-path": "^0.11.5"
   },
   "devDependencies": {
     "chai": "^4.1.2",
