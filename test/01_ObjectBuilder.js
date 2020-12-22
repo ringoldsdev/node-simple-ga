@@ -52,7 +52,7 @@ describe("ObjectBuilder", function() {
 		});
 
 		it(`should contain a key ${key}`, function() {
-			let res = objectBuilder.set(key).value();
+			let res = objectBuilder.set(key, 1234).value();
 			expect(res).to.have.key(key);
 		});
 
@@ -64,7 +64,7 @@ describe("ObjectBuilder", function() {
 
 		it(`should delete key ${key}`, function() {
 			let res = objectBuilder
-				.set(key)
+				.set(key, 1234)
 				.delete(key)
 				.value();
 			expect(res).to.not.have.key(key);
@@ -72,7 +72,7 @@ describe("ObjectBuilder", function() {
 
 		it(`should remove key ${key}`, function() {
 			let res = objectBuilder
-				.set(key)
+				.set(key, 1234)
 				.remove(key)
 				.value();
 			expect(res).to.not.have.key(key);
@@ -105,13 +105,25 @@ describe("ObjectBuilder", function() {
 			expect(res[key]).to.have.ordered.members([number, number2, number3]);
 		});
 
+		it(`should create a concatenated array with 4 numbers`, function() {
+			let number = Date.now();
+			let number2 = Date.now();
+			let number3 = Date.now();
+			let number4 = Date.now();
+			let res = objectBuilder
+				.append(key, number)
+				.append(key, number2, number3, number4)
+				.value();
+			expect(res[key]).to.have.ordered.members([number, number2, number3, number4]);
+		});
+
 		it(`should contain a nested key ${nestedKey}.${key}`, function() {
-			let res = objectBuilder.set(nestedKey + "." + key).value();
+			let res = objectBuilder.set(nestedKey + "." + key, 1234).value();
 			expect(res[nestedKey]).to.have.key(key);
 		});
 
 		it(`should clear all actions`, function() {
-			let res = objectBuilder.set("key","value").clear().value();
+			let res = objectBuilder.set(key,1234).clear().value();
 			expect(res).to.deep.eq({});
 		});
 

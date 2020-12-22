@@ -1,4 +1,4 @@
-const objectPath = require("object-path-immutable");
+const objectPath = require("./PatchedObjectPathImmutable");
 
 // Define all actions that can be called
 const ACTIONS_SET = "set";
@@ -10,28 +10,47 @@ const ACTIONS_REMOVE = "remove";
 // You can specify either a function or string to have an alias
 const ACTION_HANDLERS = {
 	[ACTIONS_SET]: function(projection, data) {
-		return objectPath.set(projection, data.key, data.value);
+		if(data.value.length === 0) {
+			throw new Error(`Can't set an empty value to ${data.key}!`);
+		}
+		return objectPath.set(projection, data.key, data.value[0]);
 	},
 	[ACTIONS_DELETE]: function(projection, data) {
-		return objectPath.del(projection, data.key);
+		projection = objectPath.del(projection, data.key);
+		if(data.value.length == 0) {
+			return projection;
+		}
+		data.value.forEach(function(value){
+			projection = objectPath.del(projection, value);
+		});
+		return projection;
 	},
 	[ACTIONS_APPEND]: function(projection, data) {
-		if (!(data.key in projection)) {
-			projection[data.key] = [];
-		}
+		projection = objectPath.ensureExists(projection, data.key, []);
+
 		if (!Array.isArray(projection[data.key])) {
 			throw new Error(`Can't append to ${data.key}! It's not an array`);
 		}
 
-		if(!Array.isArray(data.value)) {
-			return objectPath.push(projection, data.key, data.value);
+		if(data.value.length === 0) {
+			throw new Error(`Can't append an empty value to ${data.key}!`);
 		}
 
-		data.value.forEach(function(value) {
-			projection = objectPath.push(projection, data.key, value);
-		});
-
-		return projection;
+		if(data.value.length === 1 && Array.isArray(data.value[0])) {
+			data.value[0].forEach(function(value) {
+				projection = objectPath.push(projection, data.key, value);
+			});
+			return projection;
+		}
+		
+		if(data.value.length > 1) {
+			data.value.forEach(function(value) {
+				projection = objectPath.push(projection, data.key, value);
+			});
+			return projection;
+		}
+		
+		return objectPath.push(projection, data.key, data.value[0]);
 	},
 	[ACTIONS_REMOVE]: ACTIONS_DELETE
 };
@@ -86,7 +105,7 @@ const initObjectBuilder = function(initActions = []) {
 	let ObjectBuilder = {};
 
 	Object.entries(ACTIONS).forEach(function(entry) {
-		ObjectBuilder[entry[0]] = function(key, value) {
+		ObjectBuilder[entry[0]] = function(key, ...value) {
 			actions.push({ type: entry[0], data: { key, value } });
 			return this;
 		};
