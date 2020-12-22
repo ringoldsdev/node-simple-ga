@@ -65,7 +65,7 @@ initObjectBuilder = function(initActions = []) {
 		};
 	});
 
-	ObjectBuilder.toJson = function() {
+	ObjectBuilder.value = function() {
 		return actions.reduce(function(projection, action) {
 			return ACTIONS[action.type](projection, action.data);
 		}, {});
@@ -77,13 +77,14 @@ initObjectBuilder = function(initActions = []) {
 
 	ObjectBuilder.clear = function() {
 		actions = [];
+		return this;
 	};
 
 	// This is now a thenable class
 	// It means that the query builder can be used to construct the object,
 	// and when done constructing, you can use .then() or await to call this function
 	ObjectBuilder.then = function(resolve, _reject) {
-		resolve(ObjectBuilder.toJson());
+		resolve(ObjectBuilder.value());
 	};
 
 	return ObjectBuilder;
