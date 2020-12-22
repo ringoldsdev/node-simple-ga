@@ -16,7 +16,8 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": ".\\node_modules\\.bin\\mocha --watch",
+    "mocha": ".\\node_modules\\.bin\\mocha ./test",
+    "mocha-watch": ".\\node_modules\\.bin\\nodemon --ext js --watch ./ --exec 'npm run mocha' --delay 1",
     "prettier": "prettier --no-config --print-width 120 --parser flow --use-tabs --write *.js **/*.js"
   },
   "homepage": "https://github.com/lescinskiscom/node-simple-ga#readme",
@@ -40,6 +41,7 @@
     "chai": "^4.1.2",
     "dotenv": "^6.0.0",
     "mocha": "^8.2.1",
+    "nodemon": "^2.0.6",
     "prettier": "^1.13.7"
   }
 }
