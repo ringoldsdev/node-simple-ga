@@ -68,6 +68,10 @@ initObjectBuilder = function(initActions=[]){
 		return initObjectBuilder([...actions]);
 	}
 
+	ObjectBuilder.clear = function() {
+		actions = [];
+	}
+
 	// This is now a thenable class
 	// It means that the query builder can be used to construct the object,
 	// and when done constructing, you can use .then() or await to call this function
@@ -76,7 +80,6 @@ initObjectBuilder = function(initActions=[]){
 	}
 
 	return ObjectBuilder;
-
 }
 
 module.exports = function(initActions=[]) {
