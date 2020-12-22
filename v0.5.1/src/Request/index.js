@@ -46,7 +46,7 @@ const makeFiltersObject = function(filters, operator = "OR") {
 
 Request.prototype.from = function(viewId) {
 	return this.view(viewId);
-}
+};
 
 Request.prototype.view = function(viewId) {
 	viewId = ApiHelper.generateApiName(viewId);
@@ -64,7 +64,6 @@ Request.prototype.limit = function(count) {
 Request.prototype.results = function(count) {
 	return this.limit(count);
 };
-
 
 Request.prototype.everything = function() {
 	return this.pageSize(null);
@@ -102,56 +101,74 @@ Request.prototype.precise = function() {
 
 Request.prototype.today = function() {
 	var now = moment().format("YYYY-MM-DD");
-	return this.set("dateRanges", [{
-		startDate: now,
-		endDate: now
-	}]);
-}
+	return this.set("dateRanges", [
+		{
+			startDate: now,
+			endDate: now
+		}
+	]);
+};
 
 Request.prototype.yesterday = function() {
-	var now = moment().format("YYYY-MM-DD").subtract(1,"day");
-	return this.set("dateRanges", [{
-		startDate: now,
-		endDate: now
-	}]);
-}
+	var now = moment()
+		.format("YYYY-MM-DD")
+		.subtract(1, "day");
+	return this.set("dateRanges", [
+		{
+			startDate: now,
+			endDate: now
+		}
+	]);
+};
 
 Request.prototype.thisWeek = function() {
-	var startDate = moment().startOf('isoWeek').format("YYYY-MM-DD");
+	var startDate = moment()
+		.startOf("isoWeek")
+		.format("YYYY-MM-DD");
 	var endDate = moment().format("YYYY-MM-DD");
-	return this.set("dateRanges", [{
-		startDate,
-		endDate
-	}]);
-}
+	return this.set("dateRanges", [
+		{
+			startDate,
+			endDate
+		}
+	]);
+};
 
 Request.prototype.lastWeek = function() {
-	var weekStart = moment().startOf('isoWeek');
-	var startDate = moment(weekStart).subtract(7,"days").format("YYYY-MM-DD");
-	var endDate = moment(weekStart).subtract(1,"day").format("YYYY-MM-DD");
-	return this.set("dateRanges", [{
-		startDate,
-		endDate
-	}]);
-}
+	var weekStart = moment().startOf("isoWeek");
+	var startDate = moment(weekStart)
+		.subtract(7, "days")
+		.format("YYYY-MM-DD");
+	var endDate = moment(weekStart)
+		.subtract(1, "day")
+		.format("YYYY-MM-DD");
+	return this.set("dateRanges", [
+		{
+			startDate,
+			endDate
+		}
+	]);
+};
 
 Request.prototype.period = function(from, to) {
-	return this.set("dateRanges", [{
-		startDate: from,
-		endDate: to
-	}]);
+	return this.set("dateRanges", [
+		{
+			startDate: from,
+			endDate: to
+		}
+	]);
 };
 
 Request.prototype.during = function(from, to) {
-	return this.period(from,to);
-}
+	return this.period(from, to);
+};
 
 Request.prototype.periods = function(...params) {
 	// clear previous dates
-	this.set("dateRanges",[]);
-	params.forEach(function(param){
-		if(Array.isArray(param) && param.length == 2) {
-			this.period(param[0],param[1]);
+	this.set("dateRanges", []);
+	params.forEach(function(param) {
+		if (Array.isArray(param) && param.length == 2) {
+			this.period(param[0], param[1]);
 			return;
 		}
 		this.period(param);
@@ -186,11 +203,11 @@ Request.prototype.fetch = function(...values) {
 
 	values = ApiHelper.sortMetricsDimensions(values);
 
-	if(values.metrics.length > 0) {
+	if (values.metrics.length > 0) {
 		this.metrics(values.metrics);
 	}
 
-	if(values.dimensions.length > 0) {
+	if (values.dimensions.length > 0) {
 		this.dimensions(values.dimensions);
 	}
 
@@ -199,7 +216,7 @@ Request.prototype.fetch = function(...values) {
 
 Request.prototype.select = function(...values) {
 	return this.fetch(values);
-}
+};
 
 Request.prototype.clearDimensions = function() {
 	return this.clear("dimensions");
@@ -213,9 +230,9 @@ Request.prototype.removeDimension = function(name) {
 Request.prototype.removeDimensions = function(...values) {
 	var that = this;
 	values = this.getValues(values);
-	values.forEach(function(value){
-		that.removeDimension(value)
-	})
+	values.forEach(function(value) {
+		that.removeDimension(value);
+	});
 	return this;
 };
 
@@ -224,16 +241,16 @@ Request.prototype.unselect = function(...keys) {
 
 	keys = ApiHelper.sortMetricsDimensions(keys);
 
-	if(keys.metrics.length > 0) {
+	if (keys.metrics.length > 0) {
 		this.removeMetrics(keys.metrics);
 	}
 
-	if(keys.dimensions.length > 0) {
+	if (keys.dimensions.length > 0) {
 		this.removeDimensions(keys.dimensions);
 	}
 
-	return this;	
-}
+	return this;
+};
 
 Request.prototype.metric = function(name) {
 	name = ApiHelper.generateApiName(name);
@@ -259,7 +276,7 @@ Request.prototype.dimensionAsc = function(name) {
 Request.prototype.metrics = function(...values) {
 	values = this.getValues(values);
 	values = values.map(ApiHelper.generateApiName);
-	values = values.map(function(value){
+	values = values.map(function(value) {
 		return makeMetricObject(value);
 	});
 	return this.append("metrics", values);
@@ -297,9 +314,9 @@ Request.prototype.removeMetric = function(name) {
 Request.prototype.removeMetrics = function(...values) {
 	var that = this;
 	values = this.getValues(values);
-	values.forEach(function(value){
-		that.removeMetric(value)
-	})
+	values.forEach(function(value) {
+		that.removeMetric(value);
+	});
 	return this;
 };
 
@@ -351,7 +368,7 @@ Request.prototype.filter = function(type, filter) {
 };
 
 Request.prototype.filters = function(type, filters) {
-	filters = makeFiltersObject(filters,"AND");
+	filters = makeFiltersObject(filters, "AND");
 	return this.append(type, filters);
 };
 
@@ -359,7 +376,6 @@ Request.prototype.orFilters = function(type, filters) {
 	filters = makeFiltersObject(filters);
 	return this.append(type, filters);
 };
-
 
 Request.prototype.metricFilter = function(filter) {
 	return this.filter("metricFilterClauses", filter);
@@ -406,60 +422,59 @@ Request.prototype.where = function(...values) {
 	dimensionFilterList = values.dimensions;
 	notFilter = false;
 	return this;
-}
+};
 
 Request.prototype.whereDimensions = function(...values) {
 	values = this.getValues(values);
 	dimensionFilterList = values;
 	notFilter = false;
 	return this;
-}
+};
 
 Request.prototype.whereDimension = function(value) {
 	dimensionFilterList = [value];
 	notFilter = false;
 	return this;
-}
+};
 
 Request.prototype.whereMetrics = function(...values) {
 	values = this.getValues(values);
 	metricFilterList = values;
 	notFilter = false;
 	return this;
-}
+};
 
 Request.prototype.whereMetric = function(value) {
 	metricFilterList = [values];
 	notFilter = false;
 	return this;
-}
+};
 
 Request.prototype.not = function() {
 	notFilter = true;
 	return this;
-}
+};
 
-Request.prototype.filterConditions = function(values, dimensionCondition=null, metricCondition=null) {	
-
-	if(dimensionCondition && dimensionFilterList.length > 0) {
+Request.prototype.filterConditions = function(values, dimensionCondition = null, metricCondition = null) {
+	if (dimensionCondition && dimensionFilterList.length > 0) {
 		var dimensionValues = values;
-		if(dimensionCondition === "IN_LIST") {
+		if (dimensionCondition === "IN_LIST") {
 			dimensionValues = [dimensionValues];
 		}
 		var filters = [];
-		dimensionFilterList.forEach(function(name){
-			dimensionValues.forEach(function(value){
+		dimensionFilterList.forEach(function(name) {
+			dimensionValues.forEach(function(value) {
 				var f = new DimensionFilter()
 					.dimension(name)
 					// All values must be converted to a string
-					.condition(dimensionCondition, Array.isArray(value) ? value : [value.toString()])
-				if(notFilter) {
+					.condition(dimensionCondition, Array.isArray(value) ? value : [value.toString()]);
+				if (notFilter) {
 					f.not();
 				}
 				filters.push(f);
 			});
 		});
-		if(filters.length == 1) {
+		if (filters.length == 1) {
 			this.dimensionFilter(filters[0]);
 		} else {
 			this.dimensionOrFilters(filters);
@@ -467,22 +482,22 @@ Request.prototype.filterConditions = function(values, dimensionCondition=null, m
 		dimensionFilterList = [];
 	}
 
-	if(metricCondition && metricFilterList.length > 0) {
+	if (metricCondition && metricFilterList.length > 0) {
 		var metricValues = values;
 		var filters = [];
-		metricFilterList.forEach(function(name){
-			metricValues.forEach(function(value){
+		metricFilterList.forEach(function(name) {
+			metricValues.forEach(function(value) {
 				var f = new MetricFilter()
 					.metric(name)
 					// All values must be converted to a string
-					.condition(metricCondition,value.toString())
-				if(notFilter) {
+					.condition(metricCondition, value.toString());
+				if (notFilter) {
 					f.not();
 				}
 				filters.push(f);
 			});
 		});
-		if(filters.length == 1) {
+		if (filters.length == 1) {
 			this.metricFilter(filters[0]);
 		} else {
 			this.metricOrFilters(filters);
@@ -491,54 +506,54 @@ Request.prototype.filterConditions = function(values, dimensionCondition=null, m
 	}
 
 	return this;
-}
+};
 
 Request.prototype.equals = function(...values) {
 	return this.filterConditions(values, "EXACT", "EQUAL");
-}
+};
 
 Request.prototype.is = function(...values) {
 	return this.equals(values);
-}
+};
 
 Request.prototype.matchesRegex = function(...values) {
 	return this.filterConditions(values, "REGEXP");
-}
+};
 
 Request.prototype.beginsWith = function(...values) {
 	return this.filterConditions(values, "BEGINS_WITH");
-}
+};
 
 Request.prototype.endsWith = function(...values) {
 	return this.filterConditions(values, "ENDS_WITH");
-}
+};
 
 Request.prototype.contains = function(...values) {
 	return this.filterConditions(values, "PARTIAL");
-}
+};
 
 Request.prototype.greaterThan = function(...values) {
 	return this.filterConditions(values, "NUMERIC_GREATER_THAN", "GREATER_THAN");
-}
+};
 
 Request.prototype.lessThan = function(...values) {
 	return this.filterConditions(values, "NUMERIC_LESS_THAN", "LESS_THAN");
-}
+};
 
 Request.prototype.inList = function(...values) {
 	return this.filterConditions(values, "IN_LIST");
-}
+};
 
 Request.prototype.registerMetric = function(name) {
 	ApiHelper.registerMetric(name);
 	return this;
-}
+};
 
 Request.prototype.registerDimension = function(name) {
 	ApiHelper.registerDimension(name);
 	return this;
-}
+};
 
 module.exports = function() {
 	return new Request().clone().results(10000);
-}
+};

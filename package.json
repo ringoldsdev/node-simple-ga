@@ -16,7 +16,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": ".\\node_modules\\.bin\\mocha",
+    "test": ".\\node_modules\\.bin\\mocha --watch",
     "prettier": "prettier --no-config --print-width 120 --parser flow --use-tabs --write *.js **/*.js"
   },
   "homepage": "https://github.com/lescinskiscom/node-simple-ga#readme",

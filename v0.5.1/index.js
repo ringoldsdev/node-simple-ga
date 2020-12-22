@@ -37,7 +37,6 @@ const SimpleGA = function(param) {
 };
 
 SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
-
 	var that = this;
 	return new Promise(function(resolve, reject) {
 		var entries = [];
@@ -55,7 +54,6 @@ SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 					return reject(err);
 				}
 
-
 				var report = response.data.reports[0];
 
 				if (currentPage == 1) {
@@ -69,7 +67,7 @@ SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 					};
 				}
 
-				if(!("rows" in report.data)) {
+				if (!("rows" in report.data)) {
 					return resolve({ headers, entries });
 				}
 
@@ -105,11 +103,10 @@ SimpleGA.prototype.runRaw = function(request, params = {}, currentPage = 1) {
 };
 
 SimpleGA.prototype.run = function(request, params = {}) {
-
 	var that = this;
 
-	return new Promise(async function(resolve, reject){
-		if(request.get("pageSize") && !params.pages) {
+	return new Promise(async function(resolve, reject) {
+		if (request.get("pageSize") && !params.pages) {
 			params.pages = 1;
 		}
 
@@ -124,20 +121,19 @@ SimpleGA.prototype.run = function(request, params = {}) {
 		result.entries.forEach(function(entry) {
 			let dimensions = ResultParser.mergeKeyValueArrays(result.headers.dimensions, entry.dimensions);
 			let metrics = ResultParser.mergeKeyValueArrays(result.headers.metrics, entry.metrics);
-			processedResult.push(Object.assign({},dimensions,metrics));
+			processedResult.push(Object.assign({}, dimensions, metrics));
 		});
 
-		if(params.rename && Object.keys(params.rename).length > 0 && processedResult.length > 0) {
-
+		if (params.rename && Object.keys(params.rename).length > 0 && processedResult.length > 0) {
 			let oldKeys = Object.keys(params.rename);
 			let entry = processedResult[0];
 
-			oldKeys = oldKeys.filter(function(oldKey){
+			oldKeys = oldKeys.filter(function(oldKey) {
 				return oldKey in entry;
 			});
 
-			processedResult = processedResult.map(function(entry){
-				oldKeys.forEach(function(oldKey){
+			processedResult = processedResult.map(function(entry) {
+				oldKeys.forEach(function(oldKey) {
 					let newKey = params.rename[oldKey];
 					entry[newKey] = entry[oldKey];
 					delete entry[oldKey];
@@ -147,9 +143,7 @@ SimpleGA.prototype.run = function(request, params = {}) {
 		}
 
 		resolve(processedResult);
-
 	});
-
 };
 
 module.exports = {
