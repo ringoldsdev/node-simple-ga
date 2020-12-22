@@ -124,5 +124,18 @@ describe("ObjectBuilder", function() {
 			expect(res).to.deep.eq({ [key]: 1234 });
 		});
 
+		it(`should clone objectBuilder`, function() {
+			let res = objectBuilder.set("key","value");
+			let cloned = res.clone();
+			expect(res.value()).to.deep.eq(cloned.value());
+		});
+		
+		it(`should not effect cloned objectBuilder when changing the original`, function() {
+			let res = objectBuilder.set("key","value");
+			let cloned = res.clone();
+			res.delete("key");
+			expect(res.value()).to.not.deep.eq(cloned.value());
+		});	
+
 	});
 });
